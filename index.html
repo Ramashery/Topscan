@@ -1,0 +1,1141 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>TOPSCAN — Aerial Geodesy</title>
+<meta content="High-precision aerial geodesy, 3D terrain scanning and orthophotos. RTK accuracy up to 1-2 cm, LAS / DXF / TIF / OBJ / GeoJSON deliverables." name="description"/>
+<link href="https://topscan.ge/" rel="canonical"/>
+<link href="https://topscan.ge/" hreflang="en" rel="alternate"/>
+<link href="https://topscan.ge/de/" hreflang="de" rel="alternate"/>
+<link href="https://topscan.ge/ka/" hreflang="ka" rel="alternate"/>
+<link href="https://topscan.ge/ru/" hreflang="ru" rel="alternate"/>
+<link href="https://topscan.ge/" hreflang="x-default" rel="alternate"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<style>
+  :root{
+    --bg:            #14181e;
+    --bg-panel:      #13161d;
+    --bg-panel-2:    #0f1116;
+    --line:          #eef2f91a;
+    --line-solid:    #3f4249;
+    --text:          #eef2f9;
+    --text-dim:      #999ea6;
+    --accent:        #f9310f;
+    --pad:           clamp(20px, 5vw, 56px);
+    --maxw:          1280px;
+    --mono:          'Inter', Arial, sans-serif;
+    --display:       'Inter', Arial, sans-serif;
+    --body-font:     'Inter', Arial, sans-serif;
+  }
+
+  *{ box-sizing:border-box; margin:0; padding:0; }
+  html{ scroll-behavior:smooth; }
+
+  body{
+    background:var(--bg);
+    color:var(--text-dim);
+    font-family:var(--body-font);
+    font-size:16px;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+
+  img,video{ max-width:100%; display:block; }
+  a{ color:inherit; text-decoration:none; }
+  ::selection{ background:var(--accent); color:#fff; }
+
+  .wrap{
+    max-width:var(--maxw);
+    margin:0 auto;
+    padding-left:var(--pad);
+    padding-right:var(--pad);
+  }
+
+  .eyebrow{
+    display:flex;
+    align-items:center;
+    gap:9px;
+    font-family:var(--mono);
+    font-size:11px;
+    letter-spacing:.1em;
+    text-transform:uppercase;
+    color:var(--text-dim);
+    margin-bottom:20px;
+  }
+  .eyebrow::before{
+    content:"";
+    width:6px; height:6px;
+    background:var(--accent);
+    display:inline-block;
+    animation:blink 1.4s linear infinite;
+  }
+  @keyframes blink{ 0%,100%{opacity:1;} 50%{opacity:.15;} }
+
+  h1,h2,h3{
+    font-family:var(--display);
+    color:var(--text);
+    font-weight:600;
+    text-transform:uppercase;
+    letter-spacing:-.02em;
+    line-height:.98;
+    text-align:left;
+  }
+  p{ text-align:left; }
+
+  /* ============ HEADER ============ */
+  header{
+    position:fixed; top:0; left:0; right:0; z-index:100;
+    background:rgba(20,24,30,.82);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  .header-inner{
+    max-width:var(--maxw); margin:0 auto; padding:0 var(--pad);
+    height:64px; display:flex; align-items:center; justify-content:space-between; gap:20px;
+  }
+  .logo{
+    font-family:var(--mono); font-weight:700; font-size:14px;
+    letter-spacing:.04em; text-transform:uppercase; color:var(--text);
+    display:flex; align-items:center; gap:8px; white-space:nowrap;
+  }
+  .logo .sq{ width:7px; height:7px; background:var(--accent); display:inline-block; }
+  .logo img{ height:40px; width:auto; display:block; }
+
+  .header-right{ display:flex; align-items:center; gap:26px; }
+  .contact-phone{ font-family:var(--mono); font-size:12px; letter-spacing:.03em; color:var(--text-dim); white-space:nowrap; }
+  .lang-wrap{ display:flex; gap:16px; }
+  .lang-wrap a{
+    font-family:var(--mono); font-size:11px; letter-spacing:.06em; text-transform:uppercase;
+    color:var(--text-dim); text-decoration:none; transition:color .2s ease;
+  }
+  .lang-wrap a.active{ color:var(--text); }
+  .lang-wrap a:hover{ color:var(--text); }
+
+  /* ============ NAV (desktop) ============ */
+  .main-nav{ display:flex; align-items:center; gap:34px; }
+  .main-nav a{
+    font-family:var(--mono); font-size:12.5px; letter-spacing:.05em; text-transform:uppercase;
+    color:var(--text-dim); text-decoration:none; transition:color .2s ease; white-space:nowrap;
+  }
+  .main-nav a:hover{ color:var(--text); }
+  @media (max-width:900px){ .main-nav{ display:none; } }
+
+  /* ============ MENU TOGGLE (mobile hamburger) ============ */
+  .menu-toggle{
+    display:none; flex-direction:column; justify-content:center; align-items:center;
+    gap:5px; width:32px; height:32px; background:transparent; border:none; cursor:pointer;
+    padding:0; z-index:210;
+  }
+  .menu-toggle span{
+    display:block; width:20px; height:1.5px; background:var(--text);
+    transition:transform .3s ease, opacity .3s ease;
+  }
+  @media (max-width:900px){ .menu-toggle{ display:flex; } }
+  .menu-toggle.is-open span:nth-child(1){ transform:translateY(6.5px) rotate(45deg); }
+  .menu-toggle.is-open span:nth-child(2){ opacity:0; }
+  .menu-toggle.is-open span:nth-child(3){ transform:translateY(-6.5px) rotate(-45deg); }
+
+  /* ============ MOBILE NAV DRAWER ============ */
+  .nav-overlay{
+    position:fixed; inset:0; z-index:190;
+    background:rgba(15,17,22,.6);
+    opacity:0; visibility:hidden;
+    transition:opacity .35s ease, visibility .35s ease;
+  }
+  .nav-overlay.is-open{ opacity:1; visibility:visible; }
+
+  .nav-drawer{
+    position:fixed; top:0; right:0; bottom:0; left:0; z-index:200;
+    width:100vw; height:100vh; height:100dvh;
+    background:var(--bg-panel-2);
+    transform:translateX(100%);
+    transition:transform .4s cubic-bezier(.25,.46,.45,.94);
+    display:flex; flex-direction:column;
+    padding:0;
+    overflow-y:auto;
+  }
+  .nav-drawer.is-open{ transform:translateX(0); }
+  .nav-drawer-head{
+    display:flex; align-items:center; justify-content:space-between;
+    max-width:var(--maxw); width:100%; margin:0 auto;
+    padding:0 var(--pad); height:64px; flex-shrink:0;
+    border-bottom:1px solid var(--line);
+  }
+  @media (max-width:600px){ .nav-drawer-head{ height:56px; } }
+  .nav-drawer-close{
+    background:transparent; border:none; color:var(--text); font-size:22px; line-height:1;
+    cursor:pointer; padding:6px; font-family:var(--mono);
+  }
+  .nav-drawer-links{ display:flex; flex-direction:column; gap:4px; padding:24px var(--pad) 0; max-width:var(--maxw); margin:0 auto; width:100%; }
+  .nav-drawer-links a{
+    font-family:var(--display); font-size:20px; font-weight:600; text-transform:uppercase;
+    letter-spacing:-.01em; color:var(--text); text-decoration:none;
+    padding:14px 0; border-bottom:1px solid var(--line);
+    transition:color .2s ease, padding-left .2s ease;
+  }
+  .nav-drawer-links a:last-child{ border-bottom:none; }
+  .nav-drawer-links a:hover{ color:var(--accent); padding-left:6px; }
+  body.nav-locked{ overflow:hidden; }
+
+  /* ============ NAV DRAWER MEDIA (drone video + contacts) ============ */
+  .nav-drawer-media{
+    position:relative; flex:1 1 auto; min-height:240px;
+    margin-top:20px; overflow:hidden; background:var(--bg-panel-2);
+  }
+  .nav-drawer-media video{
+    position:absolute; inset:0; width:100%; height:100%; object-fit:cover;
+  }
+  .nav-drawer-media-scrim{
+    position:absolute; inset:0; z-index:1;
+    background:linear-gradient(180deg,
+      var(--bg-panel-2) 0%,
+      rgba(15,17,22,.42) 16%,
+      rgba(15,17,22,.32) 50%,
+      rgba(15,17,22,.58) 80%,
+      var(--bg-panel-2) 100%);
+  }
+  .nav-drawer-media-grain{
+    position:absolute; inset:0; z-index:2; pointer-events:none;
+    opacity:.07; mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+    background-size:180px 180px;
+  }
+  .nav-drawer-contacts{
+    position:absolute; inset:0; z-index:3;
+    display:flex; flex-direction:column; justify-content:center; align-items:flex-start;
+    padding:0 var(--pad);
+  }
+  .nav-drawer-contacts a{
+    font-family:var(--mono); font-size:13.5px; color:var(--text-dim);
+    display:block; margin-bottom:8px; text-decoration:none; transition:color .2s ease;
+  }
+  .nav-drawer-contacts a:last-child{ margin-bottom:0; }
+  .nav-drawer-contacts a:hover{ color:var(--accent); }
+
+  /* ============ EDGE BURST (mobile menu + hero subtitle) ============ */
+  [data-eb]{ display:inline-block; opacity:0; }
+  .eb-play [data-eb]{
+    animation:ebIn .8s cubic-bezier(.22,1,.36,1) both;
+  }
+  @keyframes ebIn{
+    from{ opacity:0; transform:translate(var(--ex), var(--ey)) scale(.7); filter:blur(4px); }
+    to{ opacity:1; transform:none; filter:none; }
+  }
+
+  /* ============ ZIPPER SLIDE (hero title) ============ */
+  .hero h1[data-zip-ready] span[data-zip]{ display:inline-block; opacity:0; }
+  .hero h1.zip-play span[data-zip]{
+    animation:zipperIn .7s cubic-bezier(.22,1,.36,1) both;
+    animation-delay:calc(var(--zi) * 22ms);
+  }
+  .hero h1.zip-play span[data-zip]:nth-child(odd){ --zd:1; }
+  .hero h1.zip-play span[data-zip]:nth-child(even){ --zd:-1; }
+  @keyframes zipperIn{
+    from{ opacity:0; transform:translateX(calc(var(--zd) * 46px)); }
+    to{ opacity:1; transform:none; }
+  }
+
+  .btn{
+    display:inline-flex; align-items:center; justify-content:center; gap:8px;
+    background:transparent; color:var(--text);
+    font-family:var(--display); font-weight:600; text-transform:uppercase; letter-spacing:-.01em;
+    font-size:13px; padding:11px 20px;
+    border:1px solid var(--line-solid);
+    cursor:pointer; white-space:nowrap;
+    transition:background .2s ease, color .2s ease, border-color .2s ease;
+  }
+  .btn:hover{ background:var(--accent); border-color:var(--accent); color:#fff; }
+
+  @media (max-width:600px){ .lang-wrap{ gap:10px; } .header-inner{ height:56px; } }
+
+  /* ============ HERO ============ */
+  .hero{
+    position:relative;
+    height:100svh;
+    min-height:100svh;
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+    overflow:hidden;
+  }
+  .bg-video-wrap{ position:absolute; inset:0; overflow:hidden; background:#000; }
+  .bg-video-wrap video{
+    position:absolute; top:50%; left:50%;
+    min-width:100%; min-height:100%; width:auto; height:auto;
+    transform:translate(-50%,-50%); object-fit:cover;
+    transition:opacity 1.2s ease-in-out; opacity:0;
+  }
+  .bg-video-wrap video.bg-video-active{ opacity:1; }
+  .hero-scrim{
+    position:absolute; inset:0;
+    background:
+      linear-gradient(180deg, rgba(20,24,30,.5) 0%, rgba(20,24,30,.15) 24%, rgba(20,24,30,.62) 62%, var(--bg) 100%),
+      linear-gradient(90deg, rgba(20,24,30,.7) 0%, rgba(20,24,30,.05) 55%);
+  }
+
+  .tracking-area{ position:absolute; inset:0; z-index:2; pointer-events:none; }
+  .tracking-area .vline{ position:absolute; top:0; bottom:0; width:1px; background:var(--line); }
+  .corner{ position:absolute; width:18px; height:18px; border:1px solid rgba(238,242,249,.35); }
+  .corner.tl{ top:24px; left:var(--pad); border-right:none; border-bottom:none; }
+  .corner.tr{ top:24px; right:var(--pad); border-left:none; border-bottom:none; }
+  .corner.bl{ bottom:24px; left:var(--pad); border-right:none; border-top:none; }
+  .corner.br{ bottom:24px; right:var(--pad); border-left:none; border-top:none; }
+
+  .hero-top{
+    position:relative; z-index:3;
+    display:flex; justify-content:space-between; align-items:flex-start;
+    padding:clamp(72px, 13vw, 96px) var(--pad) 0;
+  }
+  .hero-coords{
+    font-family:var(--mono); font-size:11px; letter-spacing:.04em; color:var(--text-dim);
+    display:flex; flex-direction:column; gap:6px;
+  }
+  .hero-coords .rec{ display:flex; align-items:center; gap:8px; color:var(--text); }
+  .hero-coords .rec .dot{ width:6px; height:6px; background:var(--accent); border-radius:50%; animation:blink 1s linear infinite; }
+  .hero-bottom{
+    position:relative; z-index:3;
+    padding:0 var(--pad) clamp(32px, 6vw, 56px);
+    display:flex; justify-content:space-between; align-items:flex-end; gap:clamp(20px, 3vw, 32px);
+  }
+  .hero-heading-block{ max-width:920px; }
+  .hero h1{
+    font-size:clamp(25px, 4.7vw, 56px);
+    margin-bottom:clamp(16px, 2.4vw, 24px);
+  }
+  @media (min-width:860px){
+    .hero h1{ font-size:clamp(27px, 3.13vw, 37px); }
+  }
+
+  .hero-sub{
+    font-family:var(--mono); font-size:clamp(13.5px, 1.7vw, 15.5px); line-height:1.65; color:#ffffff;
+    max-width:min(46ch, 100%); margin-bottom:clamp(18px, 3vw, 28px); text-transform:none;
+  }
+  .hero-actions{ display:flex; flex-wrap:wrap; gap:12px; margin-bottom:clamp(22px, 4vw, 36px); }
+
+  .hero-stats{
+    display:flex; flex-wrap:wrap; gap:clamp(16px,3vw,48px);
+    border-top:1px solid var(--line); padding-top:clamp(14px, 2vw, 20px);
+  }
+  .hero-stat b{ display:block; font-family:var(--display); font-size:22px; color:var(--text); font-weight:600; }
+  .hero-stat span{ font-family:var(--mono); font-size:10.5px; color:var(--text-dim); letter-spacing:.05em; text-transform:uppercase; }
+  @media (max-width:859px){
+    .hero-stats{ flex-direction:column; flex-wrap:nowrap; gap:9px; padding-top:12px; }
+    .hero-stat b{ font-size:14.5px; }
+    .hero-stat span{ font-size:7px; }
+  }
+
+  .hero-logo{
+    display:none; position:absolute; top:100px; right:var(--pad); z-index:4;
+  }
+  .hero-logo img{ height:210px; width:auto; display:block; }
+  @media (min-width:860px){ .hero-logo{ display:block; } }
+
+  .hero-toggle{
+    display:none;
+    flex-direction:column; align-items:flex-end; gap:10px;
+    font-family:var(--mono); font-size:10.5px; letter-spacing:.05em; text-transform:uppercase;
+  }
+  @media (min-width:860px){ .hero-toggle{ display:flex; } }
+  .toggle-row{ display:flex; align-items:center; gap:8px; }
+  .toggle-track{ width:60px; height:2px; background:var(--line-solid); position:relative; }
+  .toggle-thumb{ position:absolute; top:-2px; left:0; width:50%; height:6px; background:var(--accent); }
+
+  /* ============ SECTION SHELL ============ */
+  section{ padding:88px 0; position:relative; border-bottom:1px solid var(--line); }
+  section:first-of-type{ border-top:none; }
+  .section-head{ max-width:60ch; margin-bottom:48px; }
+  .section-head h2{ font-size:clamp(28px,4vw,44px); margin-bottom:14px; }
+  .section-head p{ font-family:var(--mono); color:var(--text-dim); font-size:15px; max-width:58ch; text-transform:none; }
+
+  /* ============ SERVICES (no joined table grid — separate cards) ============ */
+  .services-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:24px; }
+  @media (max-width:860px){ .services-grid{ grid-template-columns:1fr; } }
+  .service-card{ background:var(--bg-panel); border:1px solid var(--line-solid); padding:32px 28px; }
+  .service-index{ font-family:var(--mono); font-size:11px; color:var(--accent); letter-spacing:.05em; text-transform:uppercase; margin-bottom:22px; display:block; }
+  .service-card h3{ font-size:19px; margin-bottom:12px; letter-spacing:-.01em; }
+  .service-card > p{ font-family:var(--mono); color:var(--text-dim); font-size:14px; margin-bottom:18px; text-transform:none; }
+  .service-card ul{ list-style:none; border-top:1px solid var(--line); padding-top:14px; }
+  .service-card li{
+    font-family:var(--mono); font-size:13.5px; color:var(--text-dim); padding:7px 0 7px 16px;
+    position:relative; text-transform:none;
+  }
+  .service-card li::before{ content:""; position:absolute; left:0; top:12px; width:6px; height:1px; background:var(--accent); }
+
+  /* ============ EQUIPMENT ============ */
+  .equip{ display:grid; grid-template-columns:1fr 1fr; gap:60px; align-items:center; }
+  @media (max-width:900px){ .equip{ grid-template-columns:1fr; gap:44px; } }
+  .equip-visual{
+    background:var(--bg-panel); border:1px solid var(--line-solid);
+    aspect-ratio:4/3.4; position:relative; overflow:hidden;
+  }
+  .slideshow{ position:absolute; inset:0; }
+  .slideshow img{
+    position:absolute; inset:0; width:100%; height:100%; object-fit:cover;
+    opacity:0; transition:opacity 1.6s ease-in-out;
+  }
+  .slideshow img.slide-active{ opacity:1; }
+  .equip-visual::after{
+    content:""; position:absolute; inset:0;
+    background:linear-gradient(180deg, rgba(19,22,29,.05) 0%, rgba(19,22,29,.55) 100%);
+    pointer-events:none;
+  }
+  .equip-visual .scan-line{
+    position:absolute; left:0; right:0; height:1px; z-index:2;
+    background:linear-gradient(90deg, transparent, var(--accent), transparent);
+    animation:scanmove 3.2s linear infinite; opacity:.9;
+  }
+  @keyframes scanmove{ 0%{ top:6%; } 100%{ top:94%; } }
+  .equip-caption{
+    position:absolute; bottom:14px; left:14px; z-index:3;
+    font-family:var(--mono); font-size:10.5px; color:var(--text); letter-spacing:.05em;
+    text-shadow:0 1px 4px rgba(0,0,0,.6);
+  }
+
+  .equip-feature{ display:flex; gap:16px; padding:18px 0; border-top:1px solid var(--line); }
+  .equip-feature:last-child{ border-bottom:1px solid var(--line); }
+  .equip-feature .num{ font-family:var(--mono); color:var(--accent); font-size:12px; padding-top:2px; }
+  .equip-feature h4{ font-family:var(--display); color:var(--text); font-size:16px; font-weight:600; text-transform:uppercase; margin-bottom:6px; }
+  .equip-feature p{ font-family:var(--mono); color:var(--text-dim); font-size:14px; text-transform:none; }
+
+  /* ============ DELIVERABLES (no joined table grid) ============ */
+  .deliv-layout{ display:grid; grid-template-columns:1.1fr .9fr; gap:60px; align-items:start; }
+  @media (max-width:900px){ .deliv-layout{ grid-template-columns:1fr; gap:36px; } }
+  .file-grid{ display:grid; grid-template-columns:repeat(2,1fr); gap:14px; }
+  .file-badge{ background:var(--bg-panel); border:1px solid var(--line-solid); padding:20px; display:flex; flex-direction:column; gap:10px; }
+  .file-ext{ font-family:var(--mono); font-weight:700; font-size:14px; color:var(--text); display:flex; align-items:center; gap:8px; }
+  .file-ext::before{ content:""; width:7px; height:7px; background:var(--accent); }
+  .file-badge p{ font-family:var(--mono); font-size:13.5px; color:var(--text-dim); text-transform:none; }
+
+  .terrain-preview{ border:1px solid var(--line-solid); background:#000; aspect-ratio:16/11; position:relative; overflow:hidden; }
+  .terrain-video-wrap{ position:absolute; inset:0; }
+  .terrain-video-wrap video{
+    position:absolute; inset:0; width:100%; height:100%; object-fit:cover;
+    transition:opacity 1.8s cubic-bezier(.25,.46,.45,.94); opacity:0; pointer-events:none;
+  }
+  .terrain-video-wrap video.tv-active{ opacity:1; }
+  .terrain-preview::after{
+    content:""; position:absolute; inset:0; z-index:1;
+    background:linear-gradient(180deg, rgba(19,22,29,.15) 0%, rgba(19,22,29,.05) 30%, rgba(19,22,29,.5) 100%);
+    pointer-events:none;
+  }
+  .terrain-tag{
+    position:absolute; top:12px; left:12px; z-index:2; font-family:var(--mono); font-size:10.5px; color:var(--accent);
+    letter-spacing:.06em; text-transform:uppercase; background:rgba(20,24,30,.7); padding:4px 8px; border:1px solid var(--line-solid);
+  }
+
+  /* ============ LEAD FORM ============ */
+  .lead-section{ background:var(--bg-panel); }
+  .lead-layout{ display:grid; grid-template-columns:1fr 1fr; gap:60px; align-items:start; }
+  @media (max-width:900px){ .lead-layout{ grid-template-columns:1fr; gap:36px; } }
+  .lead-copy h2{ font-size:clamp(28px,4vw,40px); margin-bottom:18px; }
+  .lead-copy > p{ font-family:var(--mono); color:var(--text-dim); margin-bottom:26px; max-width:44ch; font-size:15px; text-transform:none; }
+  .lead-list{ list-style:none; }
+  .lead-list li{
+    font-family:var(--mono); font-size:14px; color:var(--text-dim); padding:10px 0;
+    border-top:1px solid var(--line); display:flex; gap:10px; text-transform:none;
+  }
+  .lead-list li:last-child{ border-bottom:1px solid var(--line); }
+  .lead-list li::before{ content:"›"; color:var(--accent); font-weight:700; }
+
+  form{ display:flex; flex-direction:column; gap:16px; }
+  .field label{
+    display:block; font-family:var(--mono); font-size:10.5px; color:var(--text-dim);
+    letter-spacing:.06em; text-transform:uppercase; margin-bottom:8px;
+  }
+  .field input, .field textarea{
+    width:100%; background:var(--bg); border:1px solid var(--line-solid); color:var(--text);
+    font-family:var(--mono); font-size:14px; padding:12px 13px;
+    transition:border-color .2s ease;
+  }
+  .field input:focus, .field textarea:focus{ outline:2px solid var(--accent); outline-offset:1px; border-color:var(--accent); }
+  .field-row{ display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  @media (max-width:480px){ .field-row{ grid-template-columns:1fr; } }
+  .form-note{ font-family:var(--mono); font-size:12px; color:var(--text-dim); text-transform:none; }
+  .form-note a{ color:var(--accent); text-decoration:underline; }
+  .submit-btn{ width:100%; padding:15px; margin-top:6px; font-size:14px; background:var(--accent); border-color:var(--accent); color:#fff; }
+  .submit-btn:hover{ background:transparent; color:var(--text); border-color:var(--line-solid); }
+  .submit-btn:disabled{ opacity:.55; cursor:not-allowed; }
+  .form-status{ font-family:var(--mono); font-size:13px; text-transform:none; display:none; }
+  .form-status.ok{ color:#4ade80; display:block; }
+  .form-status.err{ color:var(--accent); display:block; }
+
+  /* ============ FOOTER ============ */
+  footer{ padding:64px 0 28px; position:relative; overflow:hidden; }
+  .footer-media{ position:absolute; inset:0; z-index:0; background:#000; }
+  .footer-media video{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:.55; }
+  .footer-scrim{
+    position:absolute; inset:0; z-index:1;
+    background:linear-gradient(180deg, var(--bg) 0%, rgba(20,24,30,.55) 12%, rgba(20,24,30,.72) 55%, rgba(20,24,30,.88) 100%);
+  }
+  .footer-grain{
+    position:absolute; inset:0; z-index:2; pointer-events:none;
+    opacity:.07; mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+    background-size:180px 180px;
+  }
+  footer .wrap{ position:relative; z-index:3; }
+  .footer-cols{ display:flex; flex-wrap:wrap; justify-content:space-between; gap:36px; padding-bottom:36px; }
+  .footer-col h5{ font-family:var(--mono); color:var(--text); font-size:11px; text-transform:uppercase; letter-spacing:.08em; margin-bottom:14px; }
+  .footer-col p, .footer-col a{ font-family:var(--mono); font-size:13.5px; color:var(--text-dim); display:block; margin-bottom:8px; }
+  .footer-col a:hover{ color:var(--accent); }
+  .social-row{ display:flex; gap:16px; }
+  .social-row a{ font-family:var(--mono); font-size:11px; letter-spacing:.05em; text-transform:uppercase; margin-bottom:0; }
+
+  .footer-bottom{
+    display:flex; flex-wrap:wrap; justify-content:space-between; gap:10px;
+    font-family:var(--mono); font-size:10.5px; color:var(--text-dim); letter-spacing:.03em;
+    border-top:1px solid var(--line); padding-top:20px;
+  }
+  .footer-bottom .dji-credit{ text-transform:uppercase; letter-spacing:.05em; }
+
+  /* ============ REVEAL ============ */
+  .reveal{ opacity:0; transform:translateX(-14px); transition:opacity .7s ease, transform .7s ease; }
+  .reveal.is-visible{ opacity:1; transform:translateX(0); }
+
+  @media (prefers-reduced-motion: reduce){
+    html{ scroll-behavior:auto; }
+    .reveal{ opacity:1; transform:none; transition:none; }
+    .scan-line, .eyebrow::before, .hero-coords .dot{ animation:none; }
+    .bg-video-wrap video, .slideshow img, .terrain-video-wrap video{ transition:none; }
+    .footer-media video{ display:none; }
+    .nav-drawer-media video{ display:none; }
+    [data-eb]{ opacity:1 !important; }
+    .hero h1.zip-play span[data-zip]{ animation:none !important; opacity:1 !important; transform:none !important; }
+  }
+</style>
+</head>
+<body>
+<!-- ============ HEADER ============ -->
+<header>
+<div class="header-inner">
+<a aria-label="TOPSCAN" class="logo" href="#"><img alt="TOPSCAN" src="https://i.postimg.cc/d3FVmvD9/logo-topscan.png"/></a>
+<nav class="main-nav" aria-label="Primary">
+<a href="/">Home</a>
+<a href="#services">Services</a>
+<a href="/works/">Works</a>
+<a href="/blog/">Blog</a>
+<a href="/about/">About Us</a>
+</nav>
+<div class="header-right">
+<div class="lang-wrap">
+<a class="active" href="/">EN</a>
+<a href="/de/">DE</a>
+<a href="/ka/">GE</a>
+<a href="/ru/">RU</a>
+</div>
+<button aria-controls="navDrawer" aria-expanded="false" aria-label="Open menu" class="menu-toggle" id="menuToggle" type="button">
+<span></span><span></span><span></span>
+</button>
+</div>
+</div>
+</header>
+<!-- ============ MOBILE NAV DRAWER ============ -->
+<div class="nav-overlay" id="navOverlay"></div>
+<aside class="nav-drawer" id="navDrawer">
+<div class="nav-drawer-head">
+<a aria-label="TOPSCAN" class="logo" href="#"><img alt="TOPSCAN" src="https://i.postimg.cc/d3FVmvD9/logo-topscan.png"/></a>
+<button aria-label="Close menu" class="nav-drawer-close" id="navDrawerClose" type="button">&times;</button>
+</div>
+<nav class="nav-drawer-links" aria-label="Mobile primary">
+<a href="/">Home</a>
+<a href="#services">Services</a>
+<a href="/works/">Works</a>
+<a href="/blog/">Blog</a>
+<a href="/about/">About Us</a>
+</nav>
+<div class="nav-drawer-media">
+<video autoplay="" loop="" muted="" playsinline="" preload="auto" src="https://raw.githubusercontent.com/Ramashery/Mavic/refs/heads/main/video/d4.mp4"></video>
+<div class="nav-drawer-media-scrim"></div>
+<div class="nav-drawer-media-grain"></div>
+<div class="nav-drawer-contacts">
+<a href="tel:+995511744044">+995 511 74 40 44</a>
+<a href="mailto:info@topscan.ge">info@topscan.ge</a>
+<a href="http://wa.me/+995511744044" rel="noopener" target="_blank">WhatsApp</a>
+<a href="http://t.me/+995511744044" rel="noopener" target="_blank">Telegram</a>
+</div>
+</div>
+</aside>
+<!-- ============ HERO ============ -->
+<section class="hero" style="border:none; padding:0;">
+<div class="bg-video-wrap">
+<video class="bg-video" muted="" playsinline="" preload="auto" src="https://raw.githubusercontent.com/Ramashery/Mavic/refs/heads/main/video/d1.mp4"></video>
+<video class="bg-video" muted="" playsinline="" preload="auto" src="https://raw.githubusercontent.com/Ramashery/Mavic/refs/heads/main/video/d2.mp4"></video>
+<video class="bg-video" muted="" playsinline="" preload="auto" src="https://raw.githubusercontent.com/Ramashery/Mavic/refs/heads/main/video/d3.mp4"></video>
+</div>
+<div class="hero-scrim"></div>
+<div class="hero-logo"><img alt="TOPSCAN" src="https://i.postimg.cc/d3FVmvD9/logo-topscan.png"/></div>
+<div class="tracking-area">
+<div class="vline" style="left:33.33%;"></div>
+<div class="vline" style="left:66.66%;"></div>
+<div class="corner tl"></div>
+<div class="corner tr"></div>
+<div class="corner bl"></div>
+<div class="corner br"></div>
+</div>
+<div class="hero-top">
+<div class="hero-coords">
+<div class="rec"><span class="dot"></span> <span>REC · AERIAL DATA</span></div>
+<div id="rtkCoords">X: 41.7151°   Y: 44.8271°   ALT: 490M</div>
+</div>
+</div>
+<div class="hero-bottom">
+<div class="hero-heading-block">
+<div class="eyebrow">Aerial Geodesy</div>
+<h1 id="heroTitle">High-precision aerial geodesy and 3D scanning</h1>
+<p class="hero-sub" id="heroSub">DJI Enterprise drone surveys with RTK correction. Accurate data for construction, cadastre and agriculture — from flight to finished model in days.</p>
+<div class="hero-actions">
+<a class="btn" href="#lead">Get a quote</a>
+</div>
+<div class="hero-stats">
+<div class="hero-stat"><b>1–2 cm</b><span>RTK accuracy</span></div>
+<div class="hero-stat"><b>0.5 ha</b><span>free test flight</span></div>
+<div class="hero-stat"><b>24–72 h</b><span>data delivery</span></div>
+</div>
+</div>
+<div class="hero-toggle">
+<span>RTK FIX</span>
+<div class="toggle-row">
+<span>OFF</span>
+<div class="toggle-track"><div class="toggle-thumb"></div></div>
+<span>ON</span>
+</div>
+</div>
+</div>
+</section>
+<!-- ============ SERVICES ============ -->
+<section id="services">
+<div class="wrap">
+<div class="section-head reveal">
+<div class="eyebrow">Industries</div>
+<h2>Solutions by sector</h2>
+<p>The same flight yields different results depending on the task. We tailor the route, accuracy and data format to your industry.</p>
+</div>
+</div>
+<div class="wrap">
+<div class="services-grid reveal">
+<div class="service-card">
+<span class="service-index">01 — Construction</span>
+<h3>Construction &amp; Development</h3>
+<p>Progress and volume control on site without stopping work.</p>
+<ul>
+<li>Earthwork and fill volume calculation</li>
+<li>Contractor and schedule control</li>
+<li>As-built survey of construction stages</li>
+</ul>
+</div>
+<div class="service-card">
+<span class="service-index">02 — Municipal</span>
+<h3>Municipal Sector &amp; GIS</h3>
+<p>Up-to-date spatial data for territory management.</p>
+<ul>
+<li>Land parcel inventory</li>
+<li>Digitizing engineering infrastructure</li>
+<li>Updating GIS layers and cadastral plans</li>
+</ul>
+</div>
+<div class="service-card">
+<span class="service-index">03 — Agriculture</span>
+<h3>Agriculture &amp; Winemaking</h3>
+<p>Data for agronomic decisions — from planting to harvest.</p>
+<ul>
+<li>Slope and aspect maps</li>
+<li>Irrigation and drainage planning</li>
+<li>Vineyard condition monitoring</li>
+</ul>
+</div>
+</div>
+</div>
+</section>
+<!-- ============ EQUIPMENT ============ -->
+<section id="equipment">
+<div class="wrap">
+<div class="equip">
+<div class="reveal">
+<div class="equip-visual">
+<div class="slideshow" id="equipSlideshow">
+<img alt="DJI Enterprise drone survey" class="slide-active" src="https://i.postimg.cc/V6zBV4BT/3816f9984043c53eb67984513c43efae.jpg"/>
+<img alt="DJI Enterprise RTK module" src="https://i.postimg.cc/50fqRpqD/836e767a5b6dcf756e0441940edfd06a-(1).jpg"/>
+<img alt="DJI Enterprise aerial mapping" src="https://i.postimg.cc/C1wHQJHX/5c0a967d0343b5bdcf69ed0948fab495.jpg"/>
+</div>
+<div class="scan-line"></div>
+<div class="equip-caption">DJI Matrice 4E — RTK MODULE</div>
+</div>
+</div>
+<div class="reveal">
+<div class="eyebrow">Equipment</div>
+<h2 style="font-size:clamp(24px,3.4vw,36px); margin-bottom:20px;">DJI Enterprise with RTK module</h2>
+<p style="font-family:var(--mono); color:var(--text-dim); margin-bottom:8px; max-width:50ch; font-size:14.5px; text-transform:none;">We fly DJI Matrice 4E RTK and DJI Matrice platforms — centimeter-level georeferencing without ground control points or field post-processing.</p>
+<div class="equip-feature">
+<span class="num">01</span>
+<div><h4>RTK accuracy up to 1–2 cm</h4><p>The built-in RTK module receives real-time corrections — every frame's coordinates are precise without manual referencing.</p></div>
+</div>
+<div class="equip-feature">
+<span class="num">02</span>
+<div><h4>Cloud data processing</h4><p>Captured footage goes straight to cloud photogrammetry — the model and orthophoto are ready without local servers.</p></div>
+</div>
+<div class="equip-feature">
+<span class="num">03</span>
+<div><h4>Multispectral &amp; thermal imaging</h4><p>For agro-monitoring, environmental analysis, and energy audits — NDVI vegetation indices and thermal maps in a single flight.</p></div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- ============ DELIVERABLES ============ -->
+<section id="results">
+<div class="wrap">
+<div class="section-head reveal">
+<div class="eyebrow">Results</div>
+<h2>What the Client Receives</h2>
+<p>You do not receive "beautiful photos", but structured, professional geodata that is seamlessly compatible with your CAD, BIM, and GIS software.</p>
+</div>
+<div class="deliv-layout">
+<div class="file-grid reveal">
+<div class="file-badge"><span class="file-ext">.LAS / .E57</span><p>Point clouds for direct processing in Revit, AutoCAD, and ArchiCAD.</p></div>
+<div class="file-badge"><span class="file-ext">.DXF / .DWG</span><p>Digital as-built plans, facade views, and contour lines.</p></div>
+<div class="file-badge"><span class="file-ext">.TIF</span><p>High-resolution orthomosaics and Digital Terrain Models (GeoTIFF).</p></div>
+<div class="file-badge"><span class="file-ext">.OBJ / .gLTF</span><p>Photorealistic, textured 3D models for web visualization.</p></div>
+<div class="file-badge"><span class="file-ext">.GeoJSON</span><p>Geometric attribute data for interactive web databases.</p></div>
+</div>
+<div class="terrain-preview reveal">
+<span class="terrain-tag">Digital terrain model</span>
+<div class="terrain-video-wrap" id="terrainVideoWrap"></div>
+</div>
+</div>
+</div>
+</section>
+<!-- ============ LEAD FORM ============ -->
+<section class="lead-section" id="lead" style="border-bottom:none;">
+<div class="wrap">
+<div class="lead-layout">
+<div class="lead-copy reveal">
+<div class="eyebrow">Project Start</div>
+<h2>Request a Free Test Flight</h2>
+<p>We will survey a test area (up to 0.5 ha) of your current project free of charge. You will receive a point cloud or an orthomosaic to verify the data quality in your own CAD software before the project starts.</p>
+<ul class="lead-list">
+<li>Response within one business day</li>
+<li>Flight coordination accounting for airspace</li>
+<li>Sample data in a format that fits your software</li>
+</ul>
+</div>
+<form class="reveal" id="leadForm">
+<input name="access_key" type="hidden" value="4ac71fba-39d6-43c1-b57d-5fa0f546273e"/>
+<input name="subject" type="hidden" value="New request from TOPSCAN website"/>
+<input name="from_name" type="hidden" value="TOPSCAN — Website"/>
+<input autocomplete="off" name="botcheck" style="display:none" tabindex="-1" type="text"/>
+<div class="field-row">
+<div class="field"><label for="name">Name</label><input id="name" name="Name" placeholder="Your name" required="" type="text"/></div>
+<div class="field"><label for="phone">Phone</label><input id="phone" name="Phone" placeholder="+995 5__ ___ ___" required="" type="tel"/></div>
+</div>
+<div class="field"><label for="email">Email</label><input id="email" name="Email" placeholder="you@example.com" required="" type="email"/></div>
+<div class="field"><label for="site">Project &amp; Task</label><input id="site" name="Object_and_task" placeholder="E.g.: 0.4 ha plot, Kakheti, vineyard planning" type="text"/></div>
+<div class="field"><label for="comment">Comment</label><textarea id="comment" name="Comment" placeholder="Anything important about the site" rows="3"></textarea></div>
+<button class="btn submit-btn" type="submit">Request Test Flight</button>
+<p class="form-status" id="leadFormStatus"></p>
+<p class="form-note"><span>By submitting the form, you agree to the </span><a href="#">conditions of data processing</a></p>
+</form>
+</div>
+</div>
+</section>
+<!-- ============ FOOTER ============ -->
+<footer>
+<div class="footer-media">
+<video autoplay="" loop="" muted="" playsinline="" preload="auto" src="https://raw.githubusercontent.com/Ramashery/Mavic/refs/heads/main/video/d4.mp4"></video>
+</div>
+<div class="footer-scrim"></div>
+<div class="footer-grain"></div>
+<div class="wrap">
+<div class="footer-cols">
+<div class="footer-col">
+<h5>Menu</h5>
+<a href="/">Home</a>
+<a href="#services">Services</a>
+<a href="/works/">Works</a>
+<a href="/blog/">Blog</a>
+<a href="/about/">About Us</a>
+</div>
+<div class="footer-col">
+<h5>About</h5>
+<p style="max-width:30ch;">Drone surveying, digital existing conditions documentation, and 3D scanning systems based on DJI Enterprise technologies.</p>
+</div>
+<div class="footer-col">
+<h5>Contact</h5>
+<a href="tel:+995511744044">+995 511 74 40 44</a>
+<a href="mailto:info@topscan.ge">info@topscan.ge</a>
+<a href="http://wa.me/+995511744044" rel="noopener" target="_blank">WhatsApp</a>
+<a href="http://t.me/+995511744044" rel="noopener" target="_blank">Telegram</a>
+</div>
+<div class="footer-col">
+<h5>Legal / Imprint</h5>
+<p>Individual Entrepreneur [Your Name]</p>
+<p>Tax ID: [XXXXXXXXX]</p>
+</div>
+<div class="footer-col">
+<h5>Social</h5>
+<div class="social-row">
+<a href="#">FB</a>
+<a href="#">IG</a>
+<a href="#">IN</a>
+</div>
+</div>
+</div>
+<div class="footer-bottom">
+<span>© 2026 TOPSCAN. All rights reserved. Media materials provided by DJI Enterprise.</span>
+<span class="dji-credit">Media materials provided by DJI Enterprise</span>
+</div>
+</div>
+</footer>
+<script>
+(function () {
+
+  /* =========================================================
+     HERO BACKGROUND VIDEO CROSSFADE
+  ========================================================== */
+  var videos = Array.prototype.slice.call(document.querySelectorAll('.bg-video'));
+  var FADE_DURATION = 1.2;
+  var PAUSE_DURATION = 1000;
+  var currentIndex = 0;
+  var fadeStarted = false;
+
+  function startVideo(index) {
+    var v = videos[index];
+    v.currentTime = 0;
+    v.classList.add('bg-video-active');
+    v.play().catch(function(){});
+  }
+
+  videos.forEach(function (v, i) {
+    v.addEventListener('timeupdate', function () {
+      if (i !== currentIndex || !v.duration) return;
+      var timeLeft = v.duration - v.currentTime;
+      if (timeLeft <= FADE_DURATION && timeLeft > 0 && !fadeStarted) {
+        fadeStarted = true;
+        v.classList.remove('bg-video-active');
+      }
+    });
+    v.addEventListener('ended', function () {
+      if (i !== currentIndex) return;
+      v.pause();
+      v.classList.remove('bg-video-active');
+      var nextIndex = (currentIndex + 1) % videos.length;
+      currentIndex = nextIndex;
+      fadeStarted = false;
+      setTimeout(function () { startVideo(nextIndex); }, PAUSE_DURATION);
+    });
+  });
+
+  if (videos.length) startVideo(currentIndex);
+
+  /* =========================================================
+     RTK COORDS TICKER
+  ========================================================== */
+  var coordsEl = document.getElementById('rtkCoords');
+  if (coordsEl) {
+    var baseLat = 41.7151, baseLng = 44.8271;
+    setInterval(function () {
+      var lat = (baseLat + (Math.random() - 0.5) * 0.0004).toFixed(4);
+      var lng = (baseLng + (Math.random() - 0.5) * 0.0004).toFixed(4);
+      var alt = (488 + Math.random() * 4).toFixed(0);
+      coordsEl.textContent = 'X: ' + lat + '°   Y: ' + lng + '°   ALT: ' + alt + 'M';
+    }, 1800);
+  }
+
+  /* =========================================================
+     EQUIPMENT IMAGE SLIDESHOW (soft crossfade)
+  ========================================================== */
+  var slideshow = document.getElementById('equipSlideshow');
+  if (slideshow) {
+    var slides = Array.prototype.slice.call(slideshow.querySelectorAll('img'));
+    var slideIndex = 0;
+    if (slides.length > 1) {
+      setInterval(function () {
+        slides[slideIndex].classList.remove('slide-active');
+        slideIndex = (slideIndex + 1) % slides.length;
+        slides[slideIndex].classList.add('slide-active');
+      }, 4200);
+    }
+  }
+
+  /* =========================================================
+     TERRAIN PREVIEW — LOOPED VIDEO CROSSFADE
+  ========================================================== */
+  var terrainWrap = document.getElementById('terrainVideoWrap');
+  if (terrainWrap) {
+    var terrainSources = [
+      "https://cdn.jsdelivr.net/gh/Ramashery/Mavic@main/video/d6.mp4",
+      "https://www-cdn.djiits.com/reactor/assets/_next/static/videos/1cb03af0-d384-4949-946e-69e561805c21.mp4",
+      "https://www-cdn.djiits.com/reactor/assets/_next/static/videos/92501ffa-a51c-4081-b921-c5c0ce26d7d7.mp4",
+      "https://www-cdn.djiits.com/reactor/assets/_next/static/videos/c29db051-38af-4ffc-b264-62e7f46ddb12.mp4",
+      "https://www-cdn.djiits.com/reactor/assets/_next/static/videos/b9cc6b7d-eb42-49a8-ac14-595a8edab4c4.mp4",
+      "https://www-cdn.djiits.com/reactor/assets/_next/static/videos/5370bbdf-4d83-4e4e-9dde-c85dd20c4d2d.mp4",
+      "https://www-cdn.djiits.com/reactor/assets/_next/static/videos/9902db40-42fd-4f6e-b146-c458469ac39f.mp4",
+      "https://www-cdn.djiits.com/reactor/assets/_next/static/videos/96bf0536-4449-40b2-ac2f-018eb595bb72.mp4",
+      "https://www-cdn.djiits.com/reactor/assets/_next/static/videos/5e5b14c4-e952-47ae-9a74-e101d617e100.mp4"
+    ];
+
+    var tv = [];
+    terrainSources.forEach(function (src, i) {
+      var v = document.createElement('video');
+      v.src = src;
+      v.muted = true;
+      v.playsInline = true;
+      v.preload = 'auto';
+      v.setAttribute('playsinline', '');
+      v.setAttribute('webkit-playsinline', '');
+      if (i === 0) v.classList.add('tv-active');
+      terrainWrap.appendChild(v);
+      tv.push(v);
+    });
+
+    var tvCurrent = 0;
+    var tvTotal = tv.length;
+    var tvSwitching = false;
+
+    function tvSwitchNext() {
+      if (tvSwitching || tvTotal <= 1) return;
+      tvSwitching = true;
+      var cur = tv[tvCurrent];
+      var next = (tvCurrent + 1) % tvTotal;
+      var nv = tv[next];
+      nv.currentTime = 0;
+      nv.play().catch(function(){});
+      requestAnimationFrame(function () {
+        requestAnimationFrame(function () {
+          cur.classList.remove('tv-active');
+          nv.classList.add('tv-active');
+          tvCurrent = next;
+          tvSwitching = false;
+        });
+      });
+    }
+
+    tv[0].loop = false;
+    tv[0].addEventListener('loadeddata', function () { tv[0].play().catch(function(){}); });
+
+    function startCarousel() {
+      setInterval(tvSwitchNext, 4800);
+    }
+
+    function onFirstVideoEnded() {
+      tv[0].removeEventListener('ended', onFirstVideoEnded);
+      tvSwitchNext();
+      startCarousel();
+    }
+    tv[0].addEventListener('ended', onFirstVideoEnded);
+
+    setTimeout(function () {
+      if (tv[0].paused) tv[0].play().catch(function(){});
+    }, 800);
+
+    document.addEventListener('visibilitychange', function () {
+      if (!document.hidden) {
+        var cur = tv[tvCurrent];
+        if (cur && cur.paused) cur.play().catch(function(){});
+      }
+    });
+  }
+
+  /* =========================================================
+     LEAD FORM SUBMISSION (Web3Forms)
+  ========================================================== */
+  var leadForm = document.getElementById('leadForm');
+  if (leadForm) {
+    var leadStatus = document.getElementById('leadFormStatus');
+    var leadSubmitBtn = leadForm.querySelector('.submit-btn');
+    var leadOriginalLabel = leadSubmitBtn ? leadSubmitBtn.textContent : '';
+
+    var statusMessages = {
+      sending: 'Sending…',
+      ok:      'Thank you! Your request has been sent, we will reply within one business day.',
+      err:     'Something went wrong. Please try again or email info@topscan.ge'
+    };
+
+    leadForm.addEventListener('submit', function (e) {
+      e.preventDefault();
+      leadStatus.className = 'form-status';
+      leadStatus.textContent = statusMessages.sending;
+      leadStatus.style.display = 'block';
+      leadStatus.style.color = 'var(--text-dim)';
+      if (leadSubmitBtn) { leadSubmitBtn.disabled = true; }
+
+      var formData = new FormData(leadForm);
+
+      fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        headers: { 'Accept': 'application/json' },
+        body: formData
+      })
+        .then(function (res) { return res.json(); })
+        .then(function (data) {
+          if (data.success) {
+            leadStatus.className = 'form-status ok';
+            leadStatus.textContent = statusMessages.ok;
+            leadForm.reset();
+          } else {
+            leadStatus.className = 'form-status err';
+            leadStatus.textContent = statusMessages.err;
+          }
+        })
+        .catch(function () {
+          leadStatus.className = 'form-status err';
+          leadStatus.textContent = statusMessages.err;
+        })
+        .finally(function () {
+          if (leadSubmitBtn) { leadSubmitBtn.disabled = false; leadSubmitBtn.textContent = leadOriginalLabel; }
+        });
+    });
+  }
+
+  /* =========================================================
+     EDGE BURST ENGINE (mobile menu + hero subtitle)
+     Letters fly in from screen edges (left/right/top/bottom/
+     diagonals) and settle into place, staggered but concurrent.
+  ========================================================== */
+  var prefersReducedMotion = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  var EB_DIRS = [
+    { x: -120, y: 0 },
+    { x: 120, y: 0 },
+    { x: 0, y: -90 },
+    { x: 0, y: 90 },
+    { x: -100, y: -60 },
+    { x: 100, y: 60 }
+  ];
+
+  function edgeSplit(el) {
+    var text = el.textContent;
+    var html = '';
+    for (var i = 0; i < text.length; i++) {
+      var ch = text.charAt(i);
+      html += '<span data-eb>' + (ch === ' ' ? '&nbsp;' : ch) + '</span>';
+    }
+    el.innerHTML = html;
+    return Array.prototype.slice.call(el.querySelectorAll('[data-eb]'));
+  }
+
+  function prepareEdgeBurst(spans, stagger) {
+    spans.forEach(function (span, i) {
+      var d = EB_DIRS[i % EB_DIRS.length];
+      span.style.setProperty('--ex', (d.x + (Math.random() * 40 - 20)).toFixed(0) + 'px');
+      span.style.setProperty('--ey', (d.y + (Math.random() * 30 - 15)).toFixed(0) + 'px');
+      span.style.animationDelay = (i * stagger) + 'ms';
+    });
+  }
+
+  /* =========================================================
+     ZIPPER SLIDE (hero title) + EDGE BURST (hero subtitle)
+     Title zips in first, subtitle bursts in right after.
+  ========================================================== */
+  var heroTitle = document.getElementById('heroTitle');
+  var heroSub = document.getElementById('heroSub');
+
+  function zipSplit(el) {
+    var text = el.textContent;
+    var html = '';
+    for (var i = 0; i < text.length; i++) {
+      var ch = text.charAt(i);
+      html += '<span data-zip style="--zi:' + i + '">' + (ch === ' ' ? '&nbsp;' : ch) + '</span>';
+    }
+    el.innerHTML = html;
+    el.setAttribute('data-zip-ready', '1');
+    return el.querySelectorAll('[data-zip]').length;
+  }
+
+  if (heroTitle && !prefersReducedMotion) {
+    var zipCount = zipSplit(heroTitle);
+    requestAnimationFrame(function () {
+      requestAnimationFrame(function () { heroTitle.classList.add('zip-play'); });
+    });
+    var titleDuration = zipCount * 22 + 700 + 150;
+    if (heroSub) {
+      var subSpans = edgeSplit(heroSub);
+      prepareEdgeBurst(subSpans, 9);
+      setTimeout(function () { heroSub.classList.add('eb-play'); }, titleDuration);
+    }
+  }
+
+  /* =========================================================
+     MOBILE NAV DRAWER
+  ========================================================== */
+  var menuToggle = document.getElementById('menuToggle');
+  var navDrawer = document.getElementById('navDrawer');
+  var navOverlay = document.getElementById('navOverlay');
+  var navDrawerClose = document.getElementById('navDrawerClose');
+  var navDrawerVideo = navDrawer ? navDrawer.querySelector('.nav-drawer-media video') : null;
+  var navLinksList = navDrawer ? navDrawer.querySelector('.nav-drawer-links') : null;
+
+  if (navLinksList && !prefersReducedMotion) {
+    var menuLinks = Array.prototype.slice.call(navLinksList.querySelectorAll('a'));
+    var menuSpans = [];
+    menuLinks.forEach(function (a) {
+      menuSpans = menuSpans.concat(edgeSplit(a));
+    });
+    prepareEdgeBurst(menuSpans, 26);
+  }
+
+  function playMenuEdgeBurst() {
+    if (prefersReducedMotion || !navLinksList) return;
+    navLinksList.classList.remove('eb-play');
+    void navLinksList.offsetWidth; /* force reflow so the animation can restart */
+    navLinksList.classList.add('eb-play');
+  }
+  function resetMenuEdgeBurst() {
+    if (navLinksList) { navLinksList.classList.remove('eb-play'); }
+  }
+
+  function openDrawer() {
+    navDrawer.classList.add('is-open');
+    navOverlay.classList.add('is-open');
+    menuToggle.classList.add('is-open');
+    menuToggle.setAttribute('aria-expanded', 'true');
+    document.body.classList.add('nav-locked');
+    if (navDrawerVideo && navDrawerVideo.paused) { navDrawerVideo.play().catch(function () {}); }
+    playMenuEdgeBurst();
+  }
+  function closeDrawer() {
+    navDrawer.classList.remove('is-open');
+    navOverlay.classList.remove('is-open');
+    menuToggle.classList.remove('is-open');
+    menuToggle.setAttribute('aria-expanded', 'false');
+    document.body.classList.remove('nav-locked');
+    resetMenuEdgeBurst();
+  }
+  if (menuToggle && navDrawer && navOverlay) {
+    menuToggle.addEventListener('click', function () {
+      if (navDrawer.classList.contains('is-open')) { closeDrawer(); } else { openDrawer(); }
+    });
+    navOverlay.addEventListener('click', closeDrawer);
+    if (navDrawerClose) { navDrawerClose.addEventListener('click', closeDrawer); }
+    navDrawer.querySelectorAll('a').forEach(function (a) {
+      a.addEventListener('click', closeDrawer);
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') { closeDrawer(); }
+    });
+  }
+
+  /* =========================================================
+     SCROLL REVEAL
+  ========================================================== */
+  var reveals = document.querySelectorAll('.reveal');
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible');
+          io.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.15 });
+    reveals.forEach(function (el) { io.observe(el); });
+  } else {
+    reveals.forEach(function (el) { el.classList.add('is-visible'); });
+  }
+})();
+</script>
+</body>
+</html>
