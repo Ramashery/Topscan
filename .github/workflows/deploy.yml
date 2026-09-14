@@ -1,0 +1,69 @@
+name: Build & Deploy TOPSCAN site
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch: {}      # allows manual "Run workflow" button in the Actions tab
+  schedule:
+    - cron: "0 3 * * *"      # optional: daily rebuild at 03:00 UTC so content edits
+                              # made in Firestore (without a git push) go live too.
+                              # Remove this block if you don't want automatic rebuilds.
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Generate static site from Firestore
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          # TODO: once topscan.ge DNS is configured (see repo README), switch to:
+          #   BASE_URL: https://topscan.ge
+          #   SITE_PREFIX: ""
+          # and re-add the "Add CNAME" step below.
+          BASE_URL: https://ramashery.github.io/Topscan
+          SITE_PREFIX: /Topscan
+        run: python3 generate_site.py
+
+      # - name: Add CNAME (custom domain)
+      #   run: echo "topscan.ge" > public/CNAME
+      #   # ^ uncomment only once topscan.ge DNS points at GitHub Pages,
+      #   #   otherwise GitHub disables Pages for this repo until DNS resolves.
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: public
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
