@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+
+<html lang="{{ lang }}">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>{{ t.seoTitle }}</title>
+<meta content="{{ t.metaDescription }}" name="description"/>
+<link href="{{ BASE_URL }}/{{ lang }}/services/{{ service.slug }}" rel="canonical"/>
+{% for l in SUPPORTED_LANGS %}
+<link href="{{ BASE_URL }}/{{ l }}/services/{{ service.slug }}" hreflang="{{ l }}" rel="alternate"/>
+{% endfor %}
+<link href="{{ BASE_URL }}/en/services/{{ service.slug }}" hreflang="x-default" rel="alternate"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="/styles.css" rel="stylesheet"/>
+</head>
+<body>
+{% include "_header.html" %}
+
+<!-- ============ PAGE HEADER ============ -->
+<section class="page-header">
+<div class="wrap">
+<div class="breadcrumb" id="pageBreadcrumb">
+<a href="/{{ lang }}">Topscan</a><span class="sep">/</span>
+<a href="/{{ lang }}/services">{{ nav.services }}</a><span class="sep">/</span>
+<span>{{ t.title }}</span>
+</div>
+</div>
+</section>
+
+<!-- ============ OVERVIEW ============ -->
+<section id="overview" style="padding-top:8px;">
+<div class="wrap">
+<div class="service-overview">
+<div class="reveal">
+<div class="eyebrow">{{ t.categoryLabel }}</div>
+<h1 id="heroTitle">{{ t.title }}</h1>
+<p id="heroSub">{{ t.heroSub }}</p>
+<div class="stat-strip">
+{% for s in t.stats %}
+<div class="stat"><b>{{ s.value }}</b><span>{{ s.label }}</span></div>
+{% endfor %}
+</div>
+</div>
+<div class="reveal">
+<div class="service-hero-visual">
+<video autoplay="" loop="" muted="" playsinline="" preload="auto" src="{{ service.video }}"></video>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+<!-- ============ WHAT'S INCLUDED ============ -->
+<section id="included">
+<div class="wrap">
+<div class="section-head reveal">
+<div class="eyebrow">{{ t.included.eyebrow }}</div>
+<h2>{{ t.included.title }}</h2>
+<p>{{ t.included.subtitle }}</p>
+</div>
+{% for item in t.included.features %}
+<div class="equip-feature reveal{% if loop.index0 > 0 and loop.index0 <= 2 %} delay-{{ loop.index0 }}{% endif %}">
+<span class="num">{{ '%02d'|format(loop.index) }}</span>
+<div><h4>{{ item.title }}</h4><p>{{ item.desc }}</p></div>
+</div>
+{% endfor %}
+</div>
+</section>
+
+<!-- ============ PROCESS ============ -->
+<section id="process">
+<div class="wrap">
+<div class="section-head reveal">
+<div class="eyebrow">{{ t.process.eyebrow }}</div>
+<h2>{{ t.process.title }}</h2>
+<p>{{ t.process.subtitle }}</p>
+</div>
+<div class="process-grid">
+{% for step in t.process.steps %}
+<div class="process-step reveal">
+<span class="num">{{ '%02d'|format(loop.index) }}</span>
+<h4>{{ step.title }}</h4>
+<p>{{ step.desc }}</p>
+</div>
+{% endfor %}
+</div>
+</div>
+</section>
+
+<!-- ============ DELIVERABLES ============ -->
+<section id="results">
+<div class="wrap">
+<div class="section-head reveal">
+<div class="eyebrow">{{ t.results.eyebrow }}</div>
+<h2>{{ t.results.title }}</h2>
+<p>{{ t.results.subtitle }}</p>
+</div>
+<div class="deliv-layout">
+<div class="file-grid">
+{% for f in t.results.fileBadges %}
+<div class="file-badge reveal"><span class="file-ext">{{ f.ext }}</span><p>{{ f.desc }}</p></div>
+{% endfor %}
+</div>
+<div class="terrain-preview reveal">
+<span class="terrain-tag">{{ t.results.terrainTag }}</span>
+<div class="terrain-video-wrap">
+<video autoplay="" class="tv-active" loop="" muted="" playsinline="" preload="auto" src="{{ service.video }}" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:1;"></video>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+<!-- ============ RELATED SERVICES ============ -->
+{% if related_services %}
+<section id="related">
+<div class="wrap">
+<div class="section-head reveal">
+<div class="eyebrow">{{ t.relatedEyebrow }}</div>
+<h2>{{ t.relatedTitle }}</h2>
+</div>
+<div class="related-grid">
+{% for rs in related_services %}
+<a class="service-card reveal" href="/{{ lang }}/services/{{ rs.slug }}">
+<span class="service-index">{{ rs.categoryLabel }}</span>
+<h3>{{ rs.title }}</h3>
+<p>{{ rs.cardDesc }}</p>
+<span class="service-link">{{ t.learnMore }} <span aria-hidden="true">→</span></span>
+</a>
+{% endfor %}
+</div>
+</div>
+</section>
+{% endif %}
+
+{% set lead_subject = t.title %}
+{% include "_lead_form.html" %}
+{% include "_footer.html" %}
+<script>window.TOPSCAN_DATA = window.TOPSCAN_DATA || {};</script>
+<script src="/main.js"></script>
+</body>
+</html>
