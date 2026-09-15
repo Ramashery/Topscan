@@ -1,0 +1,46 @@
+<div class="g_grain_overlay u-grain-animate" aria-hidden="true"></div>
+<!-- ============ HEADER ============ -->
+<header>
+<div class="header-inner">
+<a aria-label="TOPSCAN" class="logo" href="{{ SITE_PREFIX }}/{{ lang }}"><img alt="TOPSCAN" src="{{ LOGO_URL }}"/></a>
+<nav class="main-nav" aria-label="Primary">
+{% for item in NAV_ITEMS %}
+<a class="{{ 'active' if active_page == item.id else '' }}" href="{{ SITE_PREFIX }}/{{ lang }}{{ item.path }}">{{ nav[item.id] }}</a>
+{% endfor %}
+</nav>
+<div class="header-right">
+<div class="lang-wrap">
+{% for l in SUPPORTED_LANGS %}
+<a class="{{ 'active' if l == lang else '' }}" href="{{ lang_urls[l] }}">{{ l|upper if l != 'ka' else 'GE' }}</a>
+{% endfor %}
+</div>
+<button aria-controls="navDrawer" aria-expanded="false" aria-label="Open menu" class="menu-toggle" id="menuToggle" type="button">
+<span></span><span></span><span></span>
+</button>
+</div>
+</div>
+</header>
+<!-- ============ MOBILE NAV DRAWER ============ -->
+<div class="nav-overlay" id="navOverlay"></div>
+<aside class="nav-drawer" id="navDrawer">
+<div class="nav-drawer-head">
+<a aria-label="TOPSCAN" class="logo" href="{{ SITE_PREFIX }}/{{ lang }}"><img alt="TOPSCAN" src="{{ LOGO_URL }}"/></a>
+<button aria-label="Close menu" class="nav-drawer-close" id="navDrawerClose" type="button">&times;</button>
+</div>
+<nav class="nav-drawer-links" aria-label="Mobile primary">
+{% for item in NAV_ITEMS %}
+<a class="{{ 'active' if active_page == item.id else '' }}" href="{{ SITE_PREFIX }}/{{ lang }}{{ item.path }}">{{ nav[item.id] }}</a>
+{% endfor %}
+</nav>
+<div class="nav-drawer-media">
+<video autoplay="" loop="" muted="" playsinline="" preload="auto" src="{{ SITE.navDrawerVideo }}"></video>
+<div class="nav-drawer-media-scrim"></div>
+<div class="nav-drawer-media-grain"></div>
+<div class="nav-drawer-contacts">
+<a href="tel:{{ SITE.phone }}">{{ SITE.phoneDisplay }}</a>
+<a href="mailto:{{ SITE.email }}">{{ SITE.email }}</a>
+<a href="{{ SITE.whatsapp }}" rel="noopener" target="_blank">WhatsApp</a>
+<a href="{{ SITE.telegram }}" rel="noopener" target="_blank">Telegram</a>
+</div>
+</div>
+</aside>
