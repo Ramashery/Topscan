@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+
+<html lang="{{ lang }}">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>{{ t.seoTitle }}</title>
+<meta content="{{ t.metaDescription }}" name="description"/>
+<link href="{{ BASE_URL }}/{{ lang }}/works" rel="canonical"/>
+{% for l in SUPPORTED_LANGS %}
+<link href="{{ BASE_URL }}/{{ l }}/works" hreflang="{{ l }}" rel="alternate"/>
+{% endfor %}
+<link href="{{ BASE_URL }}/en/works" hreflang="x-default" rel="alternate"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="{{ SITE_PREFIX }}/styles.css" rel="stylesheet"/>
+</head>
+<body>
+{% include "_header.html" %}
+
+<!-- ============ WORKS HERO SLIDER ============
+     Reuses the exact services-catalog slider engine (see tpl_services.html
+     and the "SERVICES HERO SLIDER" block in main.js) — same markup, same
+     IDs/classes (.sv-*, #servicesSlider, #svSlideA/B ...), zero changes to
+     main.js. The .sv- component is a generic video-crossfade content
+     slider, not something specific to the services page; the only thing
+     that ties main.js to this exact id is document.getElementById(
+     'servicesSlider'), so that id is kept as-is on purpose below.
+     window.TOPSCAN_DATA.services further down is likewise kept as-is:
+     it's the literal key main.js reads to drive the slider, populated
+     here with case-study data instead of service data. -->
+<h1 class="sr-only">{{ t.h1sr }}</h1>
+<section class="sv-hero" id="servicesSlider" aria-roledescription="carousel" aria-label="Works">
+<div class="sv-slide" id="svSlideA"><video class="sv-slide-video" id="svVideoA" muted playsinline preload="auto"></video></div>
+<div class="sv-slide" id="svSlideB"><video class="sv-slide-video" id="svVideoB" muted playsinline preload="auto"></video></div>
+<div class="hero-scrim"></div>
+<div class="tracking-area">
+<div class="corner tl"></div><div class="corner tr"></div>
+<div class="corner bl"></div><div class="corner br"></div>
+</div>
+
+<div class="wrap sv-crumb-wrap"><div class="breadcrumb"><a href="{{ SITE_PREFIX }}/{{ lang }}">Topscan</a><span class="sep">/</span><span>{{ nav.works }}</span></div></div>
+
+<div class="sv-top wrap"></div>
+
+<div class="sv-content wrap" id="svContent">
+<span class="eyebrow sv-eyebrow" id="svCat">{{ works[0].categoryLabel }}</span>
+<h2 class="sv-title" id="svTitle">{{ works[0].title }}</h2>
+<p class="sv-desc" id="svDesc">{{ works[0].cardDesc }}</p>
+<div class="sv-divider"></div>
+<div class="sv-footer-row">
+<ul class="sv-bullets" id="svBullets">
+{% for b in works[0].bullets %}
+<li>{{ b }}</li>
+{% endfor %}
+</ul>
+<a class="sv-link" href="{{ SITE_PREFIX }}/{{ lang }}/works/{{ works[0].slug }}" id="svLink">{{ t.learnMore }} <span aria-hidden="true">→</span></a>
+</div>
+</div>
+
+<div class="sv-bottom wrap">
+<button aria-controls="svMenu" aria-expanded="false" aria-haspopup="true" class="sv-menu-toggle" id="svMenuToggle" type="button"><span class="sv-menu-toggle-dot" aria-hidden="true"></span>{{ nav.works }}</button>
+<div class="sv-nums" role="tablist" aria-label="Choose a case study">
+{% for w in works %}
+<button aria-selected="{{ 'true' if loop.first else 'false' }}" class="sv-num{{ ' is-active' if loop.first else '' }}" data-i="{{ loop.index0 }}" role="tab" type="button">{{ '%02d'|format(loop.index) }}</button>
+{% endfor %}
+</div>
+</div>
+
+<div class="sv-menu-overlay" id="svMenuOverlay"></div>
+<nav class="sv-menu" aria-label="All works" id="svMenu">
+<div id="svMenuList"></div>
+</nav>
+</section>
+
+{% set lead_subject = lead.subjectDefault %}
+{% include "_lead_form.html" %}
+{% include "_footer.html" %}
+<script>
+  window.TOPSCAN_DATA = window.TOPSCAN_DATA || {};
+  // Populated with case-study summaries, in the shape the shared slider
+  // engine in main.js expects (cat/title/desc/bullets/href/video) — see
+  // the comment above the <section id="servicesSlider"> markup.
+  window.TOPSCAN_DATA.services = {{ works_json|safe }};
+</script>
+<script src="{{ SITE_PREFIX }}/main.js"></script>
+</body>
+</html>
