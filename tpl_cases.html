@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+
+<html lang="{{ lang }}">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>{{ t.seoTitle }}</title>
+<meta content="{{ t.metaDescription }}" name="description"/>
+<link href="{{ BASE_URL }}/{{ lang }}/works/{{ case.slug }}" rel="canonical"/>
+{% for l in SUPPORTED_LANGS %}
+<link href="{{ BASE_URL }}/{{ l }}/works/{{ case.slug }}" hreflang="{{ l }}" rel="alternate"/>
+{% endfor %}
+<link href="{{ BASE_URL }}/en/works/{{ case.slug }}" hreflang="x-default" rel="alternate"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="{{ SITE_PREFIX }}/styles.css" rel="stylesheet"/>
+</head>
+<body>
+{% include "_header.html" %}
+<!-- Reuses the offer page's decorative background animation — same
+     "detail page" layout family (page-header + service-overview), so a
+     second bg animation file isn't needed. -->
+<div class="site-bg-video" aria-hidden="true">
+<iframe class="site-bg-frame" src="{{ SITE_PREFIX }}/animations/an-offers.html" title="" tabindex="-1" loading="eager"></iframe>
+<div class="site-bg-scrim"></div>
+</div>
+
+<!-- ============ PAGE HEADER ============ -->
+<section class="page-header">
+<div class="wrap">
+<div class="breadcrumb" id="pageBreadcrumb"><a href="{{ SITE_PREFIX }}/{{ lang }}">Topscan</a><span class="sep">/</span><a href="{{ SITE_PREFIX }}/{{ lang }}/works">{{ nav.works }}</a><span class="sep">/</span><span>{{ t.breadcrumbTitle }}</span></div>
+</div>
+</section>
+
+<!-- ============ 00. OVERVIEW / HUD HEADER ============
+     coords/RTK/equipment line reuses .hero-coords styling (see tpl_index.html)
+     but WITHOUT id="rtkCoords": that id drives main.js's homepage coordinate
+     ticker, which jitters around Tbilisi's own fixed base lat/lng — wrong for
+     a case in Kutaisi or Kakheti. Left id-free, it's static, per-case text
+     and main.js never touches it — purely the visual HUD styling reused. -->
+<section id="overview" style="padding-top:8px;">
+<div class="wrap">
+<div class="service-overview">
+<div class="reveal">
+<div class="hero-coords" style="margin-bottom:16px;">
+<div class="rec"><span class="dot"></span> <span>REC · CASE STUDY</span></div>
+<div>X: {{ '%.4f'|format(case.coords.lat or 0) }}&#176;&#9;&#9;Y: {{ '%.4f'|format(case.coords.lng or 0) }}&#176;&#9;&#9;ALT: {{ case.coords.altM or 0 }}M</div>
+</div>
+<div class="eyebrow">{{ t.industryLabel }}</div>
+<h1 id="heroTitle">{{ t.title }}</h1>
+<p id="heroSub">{{ t.cardDesc }}</p>
+<div class="stat-strip">
+{% for s in t.hudStats %}
+<div class="stat"><b>{{ s.value }}</b><span>{{ s.label }}</span></div>
+{% endfor %}
+</div>
+</div>
+<div class="reveal">
+<div class="service-hero-visual" data-parallax>
+<video autoplay="" loop="" muted="" playsinline="" preload="auto" src="{{ case.video }}"></video>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+<!-- ============ 01. THE CHALLENGE ============ -->
+<section id="challenge">
+<div class="wrap">
+<div class="section-head reveal">
+<div class="eyebrow">{{ t.challenge.eyebrow }}</div>
+<h2>{{ t.challengeTitle }}</h2>
+<p>{{ t.challenge.clientProfile }}</p>
+</div>
+<ul class="sv-bullets reveal">
+{% for p in t.challenge.problem %}
+<li>{{ p }}</li>
+{% endfor %}
+</ul>
+<div class="stat-strip reveal" style="margin-top:32px;">
+<div class="stat"><b>{{ t.challenge.accuracyRequirement }}</b><span>{{ t.requiredAccuracy }}</span></div>
+</div>
+</div>
+</section>
+
+<!-- ============ 02. FLIGHT PARAMETERS ============ -->
+<section id="flight-params">
+<div class="wrap">
+<div class="section-head reveal">
+<div class="eyebrow">{{ t.flightParams.eyebrow }}</div>
+<h2>{{ t.flightParamsTitle }}</h2>
+</div>
+<div class="stat-strip">
+<div class="stat reveal"><b>{{ t.flightParams.agl }}</b><span>AGL</span></div>
+<div class="stat reveal"><b>{{ t.flightParams.gsd }}</b><span>GSD</span></div>
+<div class="stat reveal"><b>{{ t.flightParams.positioning }}</b><span>Positioning</span></div>
+<div class="stat reveal"><b>{{ t.flightParams.airtime }}</b><span>Airtime</span></div>
+<div class="stat reveal"><b>{{ t.flightParams.overlap }}</b><span>Overlap</span></div>
+</div>
+</div>
+</section>
+
+<!-- ============ 03. ACCURACY QA/QC ============ -->
+<section id="accuracy-qa">
+<div class="wrap">
+<div class="section-head reveal">
+<div class="eyebrow">{{ t.accuracyQa.eyebrow }}</div>
+<h2>{{ t.accuracyQaTitle }}</h2>
+</div>
+<div class="process-grid">
+{% for row in t.accuracyQa.rows %}
+<div class="process-step reveal">
+<span class="num">{{ '%02d'|format(loop.index) }}</span>
+<h4>{{ row.metric }}</h4>
+<p>{{ row.tolerance }} &#8594; {{ row.actual }}</p>
+</div>
+{% endfor %}
+</div>
+</div>
+</section>
+
+<!-- ============ 04. DELIVERABLES ============ -->
+<section id="results">
+<div class="wrap">
+<div class="section-head reveal">
+<div class="eyebrow">{{ t.deliverablesEyebrow }}</div>
+<h2>{{ t.deliverablesTitle }}</h2>
+</div>
+<div class="deliv-layout">
+<div class="file-grid">
+{% for code in case.deliverables %}
+{% set f = t.deliverablesLegend[code] %}
+{% if f %}
+<div class="file-badge reveal"><span class="file-ext">{{ f.ext }}</span><p>{{ f.desc }}</p></div>
+{% endif %}
+{% endfor %}
+</div>
+<div class="terrain-preview reveal" data-parallax>
+<span class="terrain-tag">{{ t.title }}</span>
+<div class="terrain-video-wrap">
+<video autoplay="" class="tv-active" loop="" muted="" playsinline="" preload="auto" src="{{ case.video }}" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:1;"></video>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+<!-- ============ 05. BUSINESS VALUE ============ -->
+<section id="business-value">
+<div class="wrap">
+<div class="section-head reveal">
+<div class="eyebrow">{{ t.businessValue.eyebrow }}</div>
+<h2>{{ t.businessValueTitle }}</h2>
+</div>
+{% for point in t.businessValue.points %}
+<div class="equip-feature reveal{% if loop.index0 > 0 and loop.index0 <= 2 %} delay-{{ loop.index0 }}{% endif %}">
+<span class="num">{{ '%02d'|format(loop.index) }}</span>
+<div><p>{{ point }}</p></div>
+</div>
+{% endfor %}
+</div>
+</section>
+
+<!-- ============ RELATED CASES ============ -->
+{% if related_cases %}
+<section id="related">
+<div class="wrap">
+<div class="section-head reveal">
+<div class="eyebrow">{{ t.relatedEyebrow }}</div>
+<h2>{{ t.relatedTitle }}</h2>
+</div>
+<div class="related-grid">
+{% for rc in related_cases %}
+<a class="service-card reveal" href="{{ SITE_PREFIX }}/{{ lang }}/works/{{ rc.slug }}">
+<span class="service-index">{{ rc.categoryLabel }}</span>
+<h3>{{ rc.title }}</h3>
+<p>{{ rc.cardDesc }}</p>
+<span class="service-link">{{ t.learnMore }} <span aria-hidden="true">&#8594;</span></span>
+</a>
+{% endfor %}
+</div>
+</div>
+</section>
+{% endif %}
+
+{% set lead_subject = t.title %}
+{% include "_lead_form.html" %}
+{% include "_footer.html" %}
+<script>window.TOPSCAN_DATA = window.TOPSCAN_DATA || {};</script>
+<script src="{{ SITE_PREFIX }}/main.js"></script>
+</body>
+</html>
