@@ -40,7 +40,7 @@ jobs:
           #   BASE_URL: https://topscan.ge
           #   SITE_PREFIX: ""
           # and re-add the "Add CNAME" step below.
-          BASE_URL: https://ramashery.github.io/Topscan
+          BASE_URL: https://topscan.tech/
           SITE_PREFIX: /Topscan
         run: python3 generate_site.py
 
