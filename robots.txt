@@ -1,0 +1,108 @@
+User-agent: Bingbot
+Allow: /
+Disallow: /admin-
+Disallow: /index
+Disallow: /index.html
+Disallow: /404.html
+Disallow: /animations/
+Disallow: /*//
+
+User-agent: Googlebot
+Allow: /
+Disallow: /admin-
+Disallow: /index
+Disallow: /index.html
+Disallow: /404.html
+Disallow: /animations/
+Disallow: /*//
+
+User-agent: YandexBot
+Allow: /
+Disallow: /admin-
+Disallow: /index
+Disallow: /index.html
+Disallow: /404.html
+Disallow: /animations/
+Disallow: /*//
+
+# Эти правила предназначены для всех поисковых роботов.
+User-agent: *
+Allow: /
+Disallow: /admin-
+Disallow: /index
+Disallow: /index.html
+Disallow: /404.html
+Disallow: /animations/
+Disallow: /*//
+
+# Разрешаем поиск ChatGPT (обязательно!)
+User-agent: OAI-SearchBot
+Allow: /
+Disallow: /admin-
+Disallow: /index
+Disallow: /index.html
+Disallow: /404.html
+Disallow: /animations/
+Disallow: /*//
+
+User-agent: ChatGPT-User
+Allow: /
+Disallow: /admin-
+Disallow: /index
+Disallow: /index.html
+Disallow: /404.html
+Disallow: /animations/
+Disallow: /*//
+
+# Обучение (по желанию)
+User-agent: GPTBot
+Allow: /
+Disallow: /admin-
+Disallow: /index
+Disallow: /index.html
+Disallow: /404.html
+Disallow: /animations/
+Disallow: /*//
+
+# Разрешаем Perplexity
+User-agent: PerplexityBot
+Allow: /
+Disallow: /admin-
+Disallow: /index
+Disallow: /index.html
+Disallow: /404.html
+Disallow: /animations/
+Disallow: /*//
+
+# Разрешаем краулер Claude (индексация)
+User-agent: ClaudeBot
+Allow: /
+Disallow: /admin-
+Disallow: /index
+Disallow: /index.html
+Disallow: /404.html
+Disallow: /animations/
+Disallow: /*//
+
+# Разрешаем прямые переходы из Claude по ссылкам
+User-agent: Anthropic-User
+Allow: /
+Disallow: /admin-
+Disallow: /index
+Disallow: /index.html
+Disallow: /404.html
+Disallow: /animations/
+Disallow: /*//
+
+# Обучение Google Gemini (по желанию)
+User-agent: Google-Extended
+Allow: /
+Disallow: /admin-
+Disallow: /index
+Disallow: /index.html
+Disallow: /404.html
+Disallow: /animations/
+Disallow: /*//
+
+# Указать путь к карте сайта.
+Sitemap: https://topscan.tech/sitemap.xml
