@@ -1,0 +1,26 @@
+# TOPSCAN
+
+> TOPSCAN — aerial geodesy (drone surveying) company based in Tbilisi, Georgia. RTK-corrected DJI Enterprise drones deliver survey data with 1–2 cm accuracy for construction, municipal/GIS, cadastral, agriculture and earthworks projects.
+
+TOPSCAN produces point clouds (LAS / E57), orthophotos and elevation models (GeoTIFF), CAD drawings (DXF / DWG), GIS layers (GeoJSON) and volume reports (PDF / XLSX). Services include photogrammetry, LiDAR, orthophoto mapping, multispectral surveys, volume calculation and cadastral surveys. A free test flight (up to 0.5 ha) is offered before the main contract. Supported languages: {{ supported_langs | join(', ') }}. Routing rule: every page is served under a language-prefixed path without a trailing slash (e.g. `/en`, `/ru`, `/de`, `/ka`, `/en/services`); the bare root `/` redirects to `/en`. A page's translations are linked via hreflang and listed below with the same title in each language.
+Contact: {{ site.email }}, {{ site.phoneDisplay }} (phone, WhatsApp, Telegram).
+Structured data: BlogPosting (blog articles).
+
+{% for section_name, groups in collections.items() %}
+{% if groups %}
+## {{ section_name }}
+
+{% for group_key, items in groups.items() %}
+{% set en_item = items | selectattr('lang', 'equalto', 'en') | first %}
+### {{ en_item.title if en_item else items[0].title }}
+{% for item in items %}
+- [{{ item.title }}]({{ item.url }}) `lang:{{ item.lang }}` `modified:{{ item.lastModified }}`: {{ item.description }}
+{% endfor %}
+
+{% endfor %}
+{% endif %}
+{% endfor %}
+## Technical
+
+- [Sitemap]({{ base_url }}/sitemap.xml)
+- [Robots.txt]({{ base_url }}/robots.txt)
