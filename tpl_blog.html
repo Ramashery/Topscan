@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+
+<html lang="{{ lang }}">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>{{ t.seoTitle }}</title>
+<meta content="{{ t.metaDescription }}" name="description"/>
+<link href="{{ BASE_URL }}/{{ lang }}/blog" rel="canonical"/>
+{% for l in SUPPORTED_LANGS %}
+<link href="{{ BASE_URL }}/{{ l }}/blog" hreflang="{{ l }}" rel="alternate"/>
+{% endfor %}
+<link href="{{ BASE_URL }}/en/blog" hreflang="x-default" rel="alternate"/>
+<meta content="website" property="og:type"/>
+<meta content="{{ t.seoTitle }}" property="og:title"/>
+<meta content="{{ t.metaDescription }}" property="og:description"/>
+<meta content="{{ BASE_URL }}/{{ lang }}/blog" property="og:url"/>
+<meta content="{{ LOGO_URL }}" property="og:image"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="{{ SITE_PREFIX }}/styles.css" rel="stylesheet"/>
+</head>
+<body>
+{% include "_header.html" %}
+<div class="site-bg-video" aria-hidden="true">
+<iframe class="site-bg-frame" src="{{ SITE_PREFIX }}/animations/an-offers.html" title="" tabindex="-1" loading="eager"></iframe>
+<div class="site-bg-scrim"></div>
+</div>
+
+<!-- ============ PAGE HEADER ============ -->
+<section class="page-header">
+<div class="wrap">
+<div class="breadcrumb"><a href="{{ SITE_PREFIX }}/{{ lang }}">Topscan</a><span class="sep">/</span><span>{{ nav.blog }}</span></div>
+<div class="eyebrow">{{ t.eyebrow }}</div>
+<h1 id="heroTitle">{{ t.title }}</h1>
+<p id="heroSub">{{ t.subtitle }}</p>
+</div>
+</section>
+
+<!-- ============ POSTS ============ -->
+<section id="posts" style="padding-top:40px;">
+<div class="wrap">
+{% if posts %}
+{% set featured = true %}
+{% set p = posts[0] %}
+{% include "_blog_card.html" %}
+{% if posts|length > 1 %}
+<div class="section-head reveal" style="margin-bottom:28px;">
+<div class="eyebrow">{{ t.allPosts }}</div>
+</div>
+<div class="blog-grid">
+{% set featured = false %}
+{% for p in posts[1:] %}
+{% include "_blog_card.html" %}
+{% endfor %}
+</div>
+{% endif %}
+{% else %}
+<div class="blog-empty reveal">
+<h3>{{ t.emptyTitle }}</h3>
+<p>{{ t.emptyText }}</p>
+</div>
+{% endif %}
+</div>
+</section>
+
+{% set lead_subject = lead.subjectDefault %}
+{% include "_lead_form.html" %}
+{% include "_footer.html" %}
+<script>window.TOPSCAN_DATA = window.TOPSCAN_DATA || {};</script>
+<script>
+/* Cover videos load + play only while on screen (keeps the page light). */
+(function () {
+  var vs = document.querySelectorAll('video[data-lazyvideo]');
+  if (!vs.length) return;
+  function go(v) {
+    if (!v.getAttribute('src')) v.setAttribute('src', v.getAttribute('data-src'));
+    v.muted = true;
+    var pr = v.play(); if (pr && pr.catch) pr.catch(function () {});
+  }
+  if (!('IntersectionObserver' in window)) { for (var i = 0; i < vs.length; i++) go(vs[i]); return; }
+  var io = new IntersectionObserver(function (es) {
+    es.forEach(function (e) { if (e.isIntersecting) go(e.target); else if (e.target.getAttribute('src')) e.target.pause(); });
+  }, { rootMargin: '200px' });
+  for (var j = 0; j < vs.length; j++) io.observe(vs[j]);
+})();
+</script>
+<script src="{{ SITE_PREFIX }}/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+
+<html lang="{{ lang }}">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>{{ t.seoTitle }}</title>
+<meta content="{{ t.metaDescription }}" name="description"/>
+<link href="{{ post_url }}" rel="canonical"/>
+{% for l in SUPPORTED_LANGS %}
+<link href="{{ BASE_URL }}/{{ l }}/blog/{{ post.slug }}" hreflang="{{ l }}" rel="alternate"/>
+{% endfor %}
+<link href="{{ BASE_URL }}/en/blog/{{ post.slug }}" hreflang="x-default" rel="alternate"/>
+<meta content="article" property="og:type"/>
+<meta content="{{ t.seoTitle }}" property="og:title"/>
+<meta content="{{ t.metaDescription }}" property="og:description"/>
+<meta content="{{ post_url }}" property="og:url"/>
+<meta content="{{ post.image or LOGO_URL }}" property="og:image"/>
+{% if post.dateISO %}<meta content="{{ post.dateISO }}" property="article:published_time"/>{% endif %}
+<script type="application/ld+json">{{ ld_json|safe }}</script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="{{ SITE_PREFIX }}/styles.css" rel="stylesheet"/>
+</head>
+<body>
+{% include "_header.html" %}
+<div class="site-bg-video" aria-hidden="true">
+<iframe class="site-bg-frame" src="{{ SITE_PREFIX }}/animations/an-offers.html" title="" tabindex="-1" loading="eager"></iframe>
+<div class="site-bg-scrim"></div>
+</div>
+
+<!-- ============ ARTICLE HEADER ============ -->
+<section class="page-header post-head">
+<div class="wrap">
+<div class="breadcrumb"><a href="{{ SITE_PREFIX }}/{{ lang }}">Topscan</a><span class="sep">/</span><a href="{{ SITE_PREFIX }}/{{ lang }}/blog">{{ nav.blog }}</a><span class="sep">/</span><span>{{ t.breadcrumbTitle }}</span></div>
+<div class="eyebrow">{{ post.categoryLabel }}</div>
+<h1 id="heroTitle">{{ t.title }}</h1>
+<p id="heroSub">{{ t.excerpt }}</p>
+<div class="blog-meta" style="margin-top:26px;">
+{% if post.dateText %}<time datetime="{{ post.dateISO }}">{{ post.dateText }}</time>{% endif %}
+<span>{{ ui.minRead|replace('{n}', post.readingTime|string) }}</span>
+{% if post.author %}<span>{{ ui.byAuthor }} {{ post.author }}</span>{% endif %}
+</div>
+{% if post.image or post.video %}
+<div class="post-cover">
+{% if post.image %}
+<img alt="{{ t.title }}" src="{{ post.image }}"/>
+{% else %}
+<video autoplay="" loop="" muted="" playsinline="" preload="auto" src="{{ post.video }}"></video>
+{% endif %}
+</div>
+{% endif %}
+</div>
+</section>
+
+<!-- ============ ARTICLE ============ -->
+<section id="article" style="padding-top:48px;">
+<div class="wrap">
+<div class="post-layout">
+{% if toc|length >= 3 %}
+<aside class="post-toc" aria-label="{{ ui.tocTitle }}">
+<h4>{{ ui.tocTitle }}</h4>
+<ol>
+{% for h in toc %}
+<li><a href="#{{ h.id }}">{{ h.text }}</a></li>
+{% endfor %}
+</ol>
+</aside>
+{% endif %}
+<article class="post-body">
+{% for b in body %}
+{% if b.type == 'h2' %}
+<h2 id="{{ b.id }}">{{ b.text }}</h2>
+{% elif b.type == 'h3' %}
+<h3>{{ b.text }}</h3>
+{% elif b.type == 'ul' %}
+<ul>{% for i in b['items'] %}<li>{{ i }}</li>{% endfor %}</ul>
+{% elif b.type == 'ol' %}
+<ol>{% for i in b['items'] %}<li>{{ i }}</li>{% endfor %}</ol>
+{% elif b.type == 'quote' %}
+<blockquote><p>{{ b.text }}</p>{% if b.cite %}<cite>{{ b.cite }}</cite>{% endif %}</blockquote>
+{% elif b.type == 'callout' %}
+<div class="post-callout"><p>{{ b.text }}</p></div>
+{% else %}
+<p>{{ b.text }}</p>
+{% endif %}
+{% endfor %}
+
+<div class="post-cta">
+<div>
+<h3>{{ ui.ctaTitle }}</h3>
+<p>{{ ui.ctaText }}</p>
+</div>
+<a class="btn" href="#lead">{{ ui.ctaButton }}</a>
+</div>
+
+<div class="post-foot">
+<a class="post-back" href="{{ SITE_PREFIX }}/{{ lang }}/blog"><span aria-hidden="true">←</span> {{ ui.backToBlog }}</a>
+<div class="post-share">
+<span>{{ ui.shareTitle }}</span>
+<a href="https://t.me/share/url?url={{ share.url }}&amp;text={{ share.title }}" rel="noopener" target="_blank">Telegram</a>
+<a href="https://wa.me/?text={{ share.both }}" rel="noopener" target="_blank">WhatsApp</a>
+<a href="https://www.facebook.com/sharer/sharer.php?u={{ share.url }}" rel="noopener" target="_blank">Facebook</a>
+<a href="https://www.linkedin.com/sharing/share-offsite/?url={{ share.url }}" rel="noopener" target="_blank">LinkedIn</a>
+</div>
+</div>
+</article>
+</div>
+</div>
+</section>
+
+<!-- ============ RELATED POSTS ============ -->
+{% if related_posts %}
+<section id="related">
+<div class="wrap">
+<div class="section-head reveal">
+<div class="eyebrow">{{ ui.relatedEyebrow }}</div>
+<h2>{{ ui.relatedTitle }}</h2>
+</div>
+<div class="blog-grid">
+{% set featured = false %}
+{% for p in related_posts %}
+{% include "_blog_card.html" %}
+{% endfor %}
+</div>
+</div>
+</section>
+{% endif %}
+
+{% set lead_subject = t.title %}
+{% include "_lead_form.html" %}
+{% include "_footer.html" %}
+<script>window.TOPSCAN_DATA = window.TOPSCAN_DATA || {};</script>
+<script>
+/* Related-card cover videos load + play only while on screen. */
+(function () {
+  var vs = document.querySelectorAll('video[data-lazyvideo]');
+  if (!vs.length) return;
+  function go(v) {
+    if (!v.getAttribute('src')) v.setAttribute('src', v.getAttribute('data-src'));
+    v.muted = true;
+    var pr = v.play(); if (pr && pr.catch) pr.catch(function () {});
+  }
+  if (!('IntersectionObserver' in window)) { for (var i = 0; i < vs.length; i++) go(vs[i]); return; }
+  var io = new IntersectionObserver(function (es) {
+    es.forEach(function (e) { if (e.isIntersecting) go(e.target); else if (e.target.getAttribute('src')) e.target.pause(); });
+  }, { rootMargin: '200px' });
+  for (var j = 0; j < vs.length; j++) io.observe(vs[j]);
+})();
+</script>
+<script src="{{ SITE_PREFIX }}/main.js"></script>
+</body>
+</html>
