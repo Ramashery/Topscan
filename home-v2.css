@@ -1,0 +1,177 @@
+/* =====================================================================
+   home-v2.css — EXPERIMENT (home page, v2)
+   Two parts, both scoped to body.hv2 so no other page is touched:
+     1. TYPOGRAPHY LAYER  — the whole page keeps the main site's look
+        (colours, header, footer, menu, cards, forms…); only the fonts,
+        their weights and their tracking / leading are replaced.
+     2. HERO              — pinned scroll-driven hero with telemetry log.
+   To adopt v2 site-wide later: delete the "body.hv2" prefix in part 1
+   (and move the font tokens into :root in styles.css).
+   ===================================================================== */
+
+/* ─────────────────────────────────────────────────────────────────────
+   1. TYPOGRAPHY LAYER
+   ───────────────────────────────────────────────────────────────────── */
+body.hv2{
+  /* fonts: swapping the tokens re-fonts everything that already uses them */
+  --font-main:'Geist','Montserrat',system-ui,Arial,sans-serif;
+  --display:var(--font-main);
+  --body-font:var(--font-main);
+  --mono:'Geist Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  /* spacing of letters / lines (tune here) */
+  --hv2-track:-.035em;          /* headings & large links */
+  --hv2-track-mono:.06em;       /* small mono labels */
+  --hv2-lh-head:1.04;
+  --hv2-lh-text:1.4;
+  line-height:var(--hv2-lh-text);
+}
+
+/* headings */
+body.hv2 :is(h1,h2,h3,h4){ font-weight:600; letter-spacing:var(--hv2-track); line-height:var(--hv2-lh-head); }
+
+/* running text */
+body.hv2 :is(p,li){ font-weight:500; line-height:var(--hv2-lh-text); }
+body.hv2 footer, body.hv2 footer *{ font-weight:500; }
+body.hv2 footer :is(p,li){ line-height:var(--hv2-lh-text); }
+/* items that the main site sets in the "mono" token but that are sentences, not labels */
+body.hv2 :is(.service-card li,.lead-list li,.field input,.field textarea,.form-status){ font-family:var(--font-main); }
+
+/* header, menu, buttons */
+body.hv2 .main-nav a{ font-family:var(--mono); font-weight:500; letter-spacing:var(--hv2-track-mono); }
+body.hv2 .nav-drawer-links a{ font-weight:500; letter-spacing:var(--hv2-track); }
+body.hv2 :is(.nav-drawer-contacts a,.nav-drawer-close){ font-weight:500; }
+body.hv2 .btn{ font-weight:500; letter-spacing:0; }
+
+/* small mono labels (eyebrows, indexes, captions, form labels, footer column titles …) */
+body.hv2 :is(
+  .eyebrow,.contact-phone,.lang-wrap a,.service-index,.equip-caption,.equip-feature .num,
+  .file-ext,.terrain-tag,.field label,.service-link,.sv-arrow,.sv-link,.sv-num,
+  .stat-strip .stat span,.process-step .num,.member-back,.blog-meta,.post-toc h4,
+  .post-back,.post-share a,.post-share > span,.post-body blockquote cite,.footer-col h5,.footer-bottom
+){ font-family:var(--mono); font-weight:500; letter-spacing:var(--hv2-track-mono); }
+
+/* ─────────────────────────────────────────────────────────────────────
+   2. HERO  (pinned stage inside a tall runway; scroll drives --p 0..1)
+   ───────────────────────────────────────────────────────────────────── */
+body.hv2{
+  --hv2-ok:#7aebff; --hv2-warn:#ffcb47;
+  --hv2-ease:cubic-bezier(.22,1,.36,1);
+  --hv2-nav:64px;                         /* header height (matches styles.css) */
+  --hv2-edge:16px;                        /* hero side inset: phones */
+  /* styles.css gives body overflow-x:hidden, which turns body into its own scroll container and
+     silently breaks position:sticky. `clip` hides overflow without that side effect. */
+  overflow-x:visible; overflow-x:clip;
+}
+@media (max-width:600px){ body.hv2{ --hv2-nav:56px; } }
+@media (min-width:761px){ body.hv2{ --hv2-edge:clamp(20px,3vw,40px); } }
+/* desktop: line the hero up with the header's container (logo on the left, language on the right) */
+@media (min-width:1001px){ body.hv2{ --hv2-edge:max(var(--pad), calc((100% - var(--maxw)) / 2 + var(--pad))); } }
+
+body.hv2 .hv2-runway{ position:relative; }
+html.hv2-js body.hv2 .hv2-runway{ height:280svh; }
+body.hv2 .hv2-stage{ --p:0; position:sticky; top:0; display:block; height:100svh; min-height:100svh; overflow:hidden; background:#000; }
+body.hv2 .hv2-stage .bg-video-wrap{ transform:scale(calc(1 + var(--p) * .08)); will-change:transform; }
+body.hv2 .hv2-stage .hero-scrim{
+  background:
+    radial-gradient(120% 90% at 50% 45%, rgba(0,0,0,0) 0%, rgba(0,0,0,.5) 100%),
+    linear-gradient(180deg, rgba(0,0,0,.55) 0%, rgba(0,0,0,.05) 28%, rgba(0,0,0,.7) 100%);
+}
+body.hv2 .hv2-stage .hero-scrim::after{ content:""; position:absolute; inset:0; background:#000; opacity:calc(var(--p) * .5); }
+body.hv2 .hv2-stage::after{ content:""; position:absolute; left:0; right:0; bottom:0; height:20%; z-index:2; pointer-events:none; background:linear-gradient(180deg,transparent,var(--bg)); opacity:calc((var(--p) - .8) * 5); }
+
+/* corner brackets fade in once the headline leaves */
+body.hv2 .hv2-reticle{ position:absolute; inset:calc(var(--hv2-nav) + 92px) var(--hv2-edge) 9vh; z-index:3; pointer-events:none; opacity:clamp(0, calc((var(--p) - .1) * 6), .9); }
+body.hv2 .hv2-reticle i{ position:absolute; width:22px; height:22px; border:1px solid rgba(255,255,255,.5); }
+body.hv2 .hv2-reticle i:nth-child(1){ top:0; left:0; border-right:0; border-bottom:0; }
+body.hv2 .hv2-reticle i:nth-child(2){ top:0; right:0; border-left:0; border-bottom:0; }
+body.hv2 .hv2-reticle i:nth-child(3){ bottom:0; left:0; border-right:0; border-top:0; }
+body.hv2 .hv2-reticle i:nth-child(4){ bottom:0; right:0; border-left:0; border-top:0; }
+
+/* REC label */
+body.hv2 .hv2-rec{
+  position:absolute; z-index:4; top:calc(var(--hv2-nav) + 18px); left:var(--hv2-edge);
+  display:flex; align-items:center; gap:8px;
+  font-family:var(--mono); font-size:11px; font-weight:500; letter-spacing:var(--hv2-track-mono); text-transform:uppercase; color:#fff;
+}
+body.hv2 .hv2-rec .dot{ width:6px; height:6px; border-radius:50%; background:var(--accent); animation:blink 1s linear infinite; }
+
+/* telemetry log: bottom-right on desktop, top-left on phones; only the latest lines stay bright */
+body.hv2 .hv2-log{
+  position:absolute; z-index:4; right:var(--hv2-edge); bottom:clamp(28px,7vh,64px); width:min(380px, 44vw);
+  display:flex; flex-direction:column; gap:6px;
+}
+body.hv2 .hv2-log p{
+  font-family:var(--mono); font-size:12px; font-weight:500; line-height:16px; letter-spacing:var(--hv2-track-mono); text-transform:uppercase;
+  color:#fff; white-space:nowrap; display:none; animation:hv2LogIn .5s var(--hv2-ease) both;
+}
+body.hv2 .hv2-log p.is-on{ display:block; }
+body.hv2 .hv2-log p.is-old{ opacity:.35; }
+body.hv2 .hv2-log p.is-gone{ display:none; }
+body.hv2 .hv2-log b{ font-weight:500; }
+body.hv2 .hv2-log .ok{ color:var(--hv2-ok); }
+body.hv2 .hv2-log .warn{ color:var(--hv2-warn); }
+@keyframes hv2LogIn{ from{ opacity:0; transform:translateY(6px); } to{ opacity:1; transform:none; } }
+
+/* headline block: leaves as the telemetry takes over */
+body.hv2 .hv2-copy{
+  position:absolute; z-index:5; left:var(--hv2-edge); bottom:clamp(28px,6vh,64px); width:calc(100% - var(--hv2-edge) * 2);
+  opacity:clamp(0, calc(1 - (var(--p) - .08) * 6), 1);
+  transform:translateY(calc(var(--p) * -48px));
+}
+body.hv2 .hv2-stage.is-past .hv2-copy{ visibility:hidden; pointer-events:none; }
+body.hv2 .hv2-tag{
+  font-family:var(--mono); font-size:12px; font-weight:500; letter-spacing:var(--hv2-track-mono); text-transform:uppercase;
+  color:var(--text-dim); display:flex; align-items:center; gap:10px; margin-bottom:22px;
+}
+body.hv2 .hv2-tag::before{ content:""; width:6px; height:6px; border-radius:50%; background:var(--accent); animation:blink 1.4s linear infinite; }
+body.hv2 .hv2-stage h1{
+  font-size:clamp(34px,6.2vw,88px); line-height:.98; letter-spacing:-.045em; margin-bottom:clamp(16px,2vw,26px); text-transform:none; text-wrap:balance;
+}
+body.hv2 .hero-sub{
+  font-size:clamp(16px,1.6vw,21px); font-weight:500; line-height:1.3; color:rgba(255,255,255,.85); text-transform:none;
+  max-width:min(44ch,100%); margin-bottom:clamp(18px,2.4vw,28px);
+}
+body.hv2 .hero-contact-links{ display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin-bottom:clamp(22px,3vw,34px); }
+body.hv2 .hero-contact-links .hero-contact-sep{ display:none; }
+body.hv2 .hero-contact-links a{
+  font-family:var(--font-main); font-size:15px; font-weight:500; color:#fff; letter-spacing:0; text-transform:none;
+  padding:11px 20px; border-radius:999px; background:rgba(255,255,255,.2); box-shadow:inset 0 0 0 1px rgba(255,255,255,.12);
+  transition:background .2s ease;
+}
+body.hv2 .hero-contact-links a:hover{ background:rgba(255,255,255,.3); color:#fff; }
+body.hv2 .hv2-stats{ display:flex; flex-wrap:wrap; gap:clamp(16px,3vw,44px); border-top:1px solid var(--line); padding-top:16px; }
+body.hv2 .hero-stat b{ font-family:var(--font-main); font-size:clamp(20px,2vw,26px); font-weight:600; letter-spacing:-.03em; }
+body.hv2 .hero-stat span{ font-family:var(--mono); font-size:11px; letter-spacing:var(--hv2-track-mono); color:var(--text-dim); }
+
+/* DESKTOP headline: sized by both width and height (so long RU/KA titles still fit one screen),
+   kept clear of the telemetry log, with contacts and stats tucked in tighter below */
+@media (min-width:1001px){
+  body.hv2 .hv2-copy{ width:min(780px, calc(100% - var(--hv2-edge) * 2 - 430px)); }
+  body.hv2 .hv2-stage h1{ font-size:clamp(40px, min(4.7vw, 8.4vh), 74px); line-height:1; letter-spacing:-.04em; margin-bottom:clamp(14px,1.8vh,22px); }
+  body.hv2 .hero-sub{ font-size:clamp(16px, min(1.35vw, 2.4vh), 19px); max-width:46ch; margin-bottom:clamp(16px,2.6vh,26px); }
+  body.hv2 .hero-contact-links{ margin-bottom:clamp(18px,3vh,30px); }
+  body.hv2 .hv2-tag{ margin-bottom:clamp(14px,2.4vh,22px); }
+}
+
+/* scroll progress (thin line) */
+body.hv2 .hv2-progress{ position:absolute; z-index:4; left:50%; bottom:clamp(14px,3vh,28px); transform:translateX(-50%); pointer-events:none; }
+body.hv2 .hv2-progress i{ display:block; width:96px; height:1px; background:rgba(255,255,255,.12); position:relative; overflow:hidden; }
+body.hv2 .hv2-progress i::after{ content:""; position:absolute; inset:0; background:rgba(255,255,255,.55); transform-origin:0 50%; transform:scaleX(var(--p)); }
+
+/* phones */
+@media (max-width:760px){
+  html.hv2-js body.hv2 .hv2-runway{ height:240svh; }
+  body.hv2 .hv2-log{ left:var(--hv2-edge); right:auto; top:calc(var(--hv2-nav) + 76px); bottom:auto; width:calc(100% - var(--hv2-edge) * 2); }
+  body.hv2 .hv2-log p{ font-size:11px; }
+  body.hv2 .hv2-rec{ font-size:10px; }
+  body.hv2 .hv2-progress{ display:none; }
+}
+
+/* reduced motion: static hero, no pinning */
+@media (prefers-reduced-motion:reduce){
+  html.hv2-js body.hv2 .hv2-runway{ height:auto; }
+  body.hv2 .hv2-stage{ position:relative; --p:0 !important; }
+  body.hv2 .hv2-log p{ animation:none; }
+  body.hv2 .hv2-log p:nth-child(n+6){ display:none; }
+  body.hv2 .hv2-log p:nth-child(-n+5){ display:block; }
+}
