@@ -1,0 +1,53 @@
+<footer>
+<div class="footer-media">
+<video autoplay="" loop="" muted="" playsinline="" preload="auto" src="{{ SITE.footerVideo }}"></video>
+</div>
+<div class="footer-seam" aria-hidden="true"></div>
+<div class="footer-scrim"></div>
+<div class="footer-grain"></div>
+<div class="wrap">
+<div class="footer-cols">
+<div class="footer-col">
+<h5>{{ t.footerMenu }}</h5>
+{% for item in NAV_ITEMS %}
+<a href="{{ SITE_PREFIX }}/{{ lang }}{{ item.path }}">{{ nav[item.id] }}</a>
+{% endfor %}
+</div>
+<div class="footer-col footer-contacts">
+<h5>{{ t.footerContact }}</h5>
+<a href="tel:{{ SITE.phone }}">{{ SITE.phoneDisplay }}</a>
+<a href="mailto:{{ SITE.email }}">{{ SITE.email }}</a>
+<a href="{{ SITE.whatsapp }}" rel="noopener" target="_blank">WhatsApp</a>
+<a href="{{ SITE.telegram }}" rel="noopener" target="_blank">Telegram</a>
+</div>
+<div class="footer-col footer-legal" lang="{{ lang }}">
+<h5>{{ t.footerLegal }}</h5>
+{% set L = SITE.legal %}
+{% if L.name %}
+<p class="legal-name"><strong>{{ L.name }}</strong>{% if L.form %}, {{ L.form }}{% endif %}</p>
+{% if L.nameKa and L.nameKa != L.name %}<p class="legal-name-ka" lang="ka">{{ L.nameKa }}</p>{% endif %}
+{% if L.idNumber %}<p>{{ L.labelId }}: {{ L.idNumber }}</p>{% endif %}
+{% if L.address %}<p>{{ L.labelAddress }}: {{ L.address }}</p>{% endif %}
+{% if L.office %}<p>{{ L.labelOffice }}: {{ L.office }}</p>{% endif %}
+{% if L.licence %}<p>{{ L.labelLicence }}: {{ L.licence }}</p>{% endif %}
+{% else %}
+<p>{{ L.entityLine }}</p>
+<p>{{ L.taxIdLine }}</p>
+{% endif %}
+</div>
+<div class="footer-col">
+<h5>{{ t.footerSocial }}</h5>
+<div class="social-row">
+<a href="{{ SITE.social.facebook }}">FB</a>
+<a href="{{ SITE.social.instagram }}">IG</a>
+<a href="{{ SITE.social.linkedin }}">IN</a>
+</div>
+</div>
+</div>
+<div class="footer-bottom">
+<span>© {{ CURRENT_YEAR }} TOPSCAN. {{ t.footerRights }}</span>
+{% if SITE.hasPrivacy %}<a class="legal-link" href="{{ SITE_PREFIX }}/{{ lang }}/privacy">{{ SITE.legal.privacyLabel }}</a>{% endif %}
+<span class="dji-credit">{{ t.footerDjiCredit }}</span>
+</div>
+</div>
+</footer>

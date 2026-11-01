@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="{{ lang }}">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{ og.title }}</title>
+<meta name="description" content="{{ og.description }}">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="{{ canonical }}">
+{% for h in hreflangs %}
+<link rel="alternate" hreflang="{{ h.code }}" href="{{ h.url }}">
+{% endfor %}
+<meta property="og:type" content="website">
+<meta property="og:title" content="{{ og.title }}">
+<meta property="og:description" content="{{ og.description }}">
+<meta property="og:image" content="{{ og.image }}">
+<meta property="og:url" content="{{ canonical }}">
+<link rel="stylesheet" href="{{ SITE_PREFIX }}/styles.css">
+</head>
+<body class="legal-page-body">
+{% include "_header.html" %}
+<main class="legal-page">
+<div class="wrap">
+<h1>{{ page.h1 }}</h1>
+{% if page.updated %}<p class="legal-updated">{{ page.updated }}</p>{% endif %}
+<div class="legal-body">
+{% for b in page.body %}
+{% if b.type == "html" %}{{ b.html|safe }}
+{% elif b.type == "h2" %}<h2 id="{{ b.id }}">{{ b.text }}</h2>
+{% elif b.type == "ul" %}<ul>{% for i in b.items %}<li>{{ i }}</li>{% endfor %}</ul>
+{% elif b.type == "ol" %}<ol>{% for i in b.items %}<li>{{ i }}</li>{% endfor %}</ol>
+{% else %}<p>{{ b.text }}</p>
+{% endif %}
+{% endfor %}
+</div>
+</div>
+</main>
+{% include "_footer.html" %}
+<script src="{{ SITE_PREFIX }}/main.js" defer></script>
+</body>
+</html>
