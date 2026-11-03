@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+
+<html lang="{{ lang }}">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>{{ t.seoTitle }}</title>
+<meta content="{{ t.metaDescription }}" name="description"/>
+<meta content="index, follow, max-image-preview:large" name="robots"/>
+<link href="{{ BASE_URL }}/{{ lang }}/services" rel="canonical"/>
+{% for h in hreflangs %}
+<link href="{{ h.url }}" hreflang="{{ h.code }}" rel="alternate"/>
+{% endfor %}
+<meta content="website" property="og:type"/>
+<meta content="{{ og.site_name }}" property="og:site_name"/>
+<meta content="{{ og.locale }}" property="og:locale"/>
+<meta content="{{ og.url }}" property="og:url"/>
+<meta content="{{ og.title }}" property="og:title"/>
+<meta content="{{ og.description }}" property="og:description"/>
+<meta content="{{ og.image }}" property="og:image"/>
+<meta content="{{ og.alt }}" property="og:image:alt"/>
+<meta content="summary_large_image" name="twitter:card"/>
+<meta content="{{ og.title }}" name="twitter:title"/>
+<meta content="{{ og.description }}" name="twitter:description"/>
+<meta content="{{ og.image }}" name="twitter:image"/>
+{% if ld_json %}
+<script type="application/ld+json">{{ ld_json|safe }}</script>
+{% endif %}
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="{{ SITE_PREFIX }}/styles.css" rel="stylesheet"/>
+</head>
+<body>
+{% include "_header.html" %}
+
+<!-- ============ SERVICES HERO (list switcher) ============ -->
+<h1 class="sr-only">{{ t.h1sr }}</h1>
+<nav class="sr-only" aria-label="{{ nav.services }}">
+<ul>
+{% for s in services %}
+<li><a href="{{ SITE_PREFIX }}/{{ lang }}/services/{{ s.slug }}">{{ s.title }}</a> — {{ s.cardDesc }}</li>
+{% endfor %}
+</ul>
+</nav>
+{% set lbl = ['Back', 'Watch'] %}
+{% set ns = namespace(cats=[]) %}
+{% for s in services %}{% if s.categoryLabel not in ns.cats %}{% set ns.cats = ns.cats + [s.categoryLabel] %}{% endif %}{% endfor %}
+<noscript><style>.svh-content{opacity:1!important;visibility:visible!important}.svh-mask{display:none!important}.svh-current{visibility:visible!important;transform:none!important}</style></noscript>
+<div class="svs-track" id="svsTrack">
+<div class="svs-stage" id="svsStage">
+<section class="svh" id="svHero" aria-roledescription="carousel" aria-label="{{ nav.services }}">
+<div class="svh-media" aria-hidden="true">
+<div class="svh-stage" id="svStage">
+<div class="svh-aperture"><div class="svh-scene"><video class="svh-video" id="svVideoA" muted playsinline loop preload="auto"></video></div></div>
+<div class="svh-aperture"><div class="svh-scene"><video class="svh-video" id="svVideoB" muted playsinline loop preload="auto"></video></div></div>
+</div>
+<div class="hero-scrim"></div>
+</div>
+
+<div class="wrap sv-crumb-wrap"><div class="breadcrumb"><a href="{{ SITE_PREFIX }}/{{ lang }}">Topscan</a><span class="sep">/</span><span>{{ nav.services }}</span></div></div>
+
+<div class="svh-projects">
+<div class="svh-lists">
+{% for cat in ns.cats %}
+{% set gi = loop.index0 %}
+{% set rn = namespace(r=1) %}
+<div class="svh-group">
+{% if cat %}<div class="svh-list-title" style="--d:{{ '%.3f'|format(0.25 + gi*0.15) }}s"><span class="svh-content">{{ cat }}</span><span class="svh-mask"></span></div>{% endif %}
+<div class="svh-list">
+{% for s in services %}{% if s.categoryLabel == cat %}
+<a class="svh-item{{ ' selected' if loop.index0 == 0 else '' }}" data-i="{{ loop.index0 }}" href="{{ SITE_PREFIX }}/{{ lang }}/services/{{ s.slug }}" style="--d:{{ '%.3f'|format(0.25 + gi*0.15 + rn.r*0.025) }}s"><span class="svh-content"><span>[ {{ '%02d'|format(loop.index) }} ]</span><span>{{ s.title }}</span></span><span class="svh-mask"></span></a>
+{% set rn.r = rn.r + 1 %}
+{% endif %}{% endfor %}
+</div>
+</div>
+{% endfor %}
+</div>
+
+<div class="svh-current">
+<div class="svh-cur-left">
+<div class="svh-info">
+<div class="svh-grey svh-swap" id="svCat">[ {{ services[0].categoryLabel }} ]</div>
+<div class="svh-white svh-desc svh-swap" id="svDesc">{{ services[0].cardDesc }}</div>
+</div>
+<div class="svh-nav">
+<button class="svh-nav-item" type="button" data-go="back"><span class="svh-nav-label">{{ lbl[0] }}</span><span class="svh-nav-arrow" aria-hidden="true">→</span></button>
+<a class="svh-nav-item js-watch" href="{{ SITE_PREFIX }}/{{ lang }}/services/{{ services[0].slug }}"><span class="svh-nav-label">{{ lbl[1] }}</span><span class="svh-nav-arrow" aria-hidden="true">→</span></a>
+</div>
+</div>
+<div class="svh-cur-right"><div class="svh-cur-title svh-swap" id="svTitle">{{ services[0].title }}</div></div>
+</div>
+
+<div class="svh-nav svh-nav-mobile">
+<button class="svh-nav-item" type="button" data-go="back"><span class="svh-nav-label">{{ lbl[0] }}</span><span class="svh-nav-arrow" aria-hidden="true">→</span></button>
+<a class="svh-nav-item js-watch" href="{{ SITE_PREFIX }}/{{ lang }}/services/{{ services[0].slug }}"><span class="svh-nav-label">{{ lbl[1] }}</span><span class="svh-nav-arrow" aria-hidden="true">→</span></a>
+</div>
+</div>
+</section>
+
+{% macro rich(s) %}{% for part in (s or '').split('*') %}{% if loop.index0 is odd %}<span class="svs-light">{{ part }}</span>{% else %}{{ part }}{% endif %}{% endfor %}{% endmacro %}
+{% set x = t.seoText or {} %}
+{% set hA = x.heading if x.heading else [x.title or t.h1sr] %}
+{% set intro = x.intro or [t.metaDescription] %}
+{% set hB = x.listHeading if x.listHeading else [nav.services] %}
+{% set statA = (x.listStat or [])[0] %}
+{% set statB = (x.listStat or [])[1] %}
+{% set lk = [] %}
+{% for sl in ['orthophoto','photogrammetry','lidar','volumetrics','cadastral'] %}{% for s in services %}{% if s.slug == sl %}{% set _ = lk.append(s) %}{% endif %}{% endfor %}{% endfor %}
+
+<!-- ============ ABOUT PANEL (rises over the hero; lava-lamp background) ============ -->
+<section class="svs-panel svs-about" id="svsAbout" aria-label="{{ x.title or t.h1sr }}">
+<div class="svs-lava" aria-hidden="true"><div class="svs-lava-bg"><div class="svs-blob"></div><div class="svs-blob"></div><div class="svs-blob"></div><div class="svs-blob"></div><div class="svs-blob"></div></div></div>
+<div class="svs-about-text">
+<div class="svs-para" data-split="up">
+{% for p in intro %}<p class="ln" style="--i:{{ loop.index0 }}"><span class="ln-in">{{ p }}</span></p>{% endfor %}
+</div>
+{% if lk %}
+<div class="svs-links-rv"><div class="svs-links">
+{% for s in lk %}<a href="{{ SITE_PREFIX }}/{{ lang }}/services/{{ s.slug }}">[ {{ s.title }} ]</a>{% endfor %}
+<span class="svs-links-fill" aria-hidden="true"></span></div></div>
+{% endif %}
+</div>
+<div class="svs-about-bottom">
+<div class="svs-heading svs-heading-r" role="heading" aria-level="2" data-split="wipe">
+{% for h in hA %}<span class="ln" style="--i:{{ loop.index0 }}"><span class="ln-in">{{ rich(h) }}</span><span class="ln-mask"></span></span>{% endfor %}
+</div>
+<div class="svs-end-row">
+{% if x.cta %}<a class="svs-link" href="mailto:{{ SITE.email }}">[ {{ x.cta }} ]</a>{% endif %}
+{% if x.closing %}<div class="svs-closing">{{ x.closing }}</div>{% endif %}
+</div>
+</div>
+</section>
+
+<!-- ============ SERVICES LIST PANEL ("brands" of the reference): slides in from the right ============ -->
+<section class="svs-panel svs-brands" id="svsBrands" aria-label="{{ nav.services }}">
+<div class="svb-video svb-fade" aria-hidden="true"><video id="svbVidA" muted playsinline loop preload="none"></video><video id="svbVidB" muted playsinline loop preload="none"></video></div>
+<div class="svb-top">
+<div class="svb-note svb-fade">{{ x.listNote }}</div>
+<div class="svb-heading" role="heading" aria-level="2" data-split="wipe">
+{% for h in hB %}<span class="ln" style="--i:{{ loop.index0 }}"><span class="ln-in">{{ rich(h) }}</span><span class="ln-mask"></span></span>{% endfor %}
+</div>
+</div>
+<div class="svb-bottom">
+<div class="svb-stat svb-fade">{{ statA }}</div>
+<div class="svb-stat svb-fade">{{ statB }}</div>
+<ol class="svb-list" id="svbList">
+{% for s in services %}
+<li class="svb-slide" style="--i:{{ loop.index0 }}"><a class="svb-item{{ ' selected' if loop.index0 == 0 else '' }}" data-i="{{ loop.index0 }}" href="{{ SITE_PREFIX }}/{{ lang }}/services/{{ s.slug }}"><span>[ {{ '%02d'|format(loop.index) }} ]</span><span>{{ s.title }}</span></a></li>
+{% endfor %}
+</ol>
+</div>
+{% if x.listContact %}<a class="svs-link svb-contact svb-fade" href="mailto:{{ SITE.email }}">[ {{ x.listContact }} ]</a>{% endif %}
+</section>
+</div>
+</div>
+
+<div class="svs-end">
+{% include "_footer_services.html" %}
+</div>
+<script>
+  window.TOPSCAN_DATA = window.TOPSCAN_DATA || {};
+  window.TOPSCAN_DATA.services = {{ services_json|safe }};
+</script>
+<script>
+/* Services hero: list switcher (autoplay with progress fill, hover/Back to change, row/Watch -> service page) */
+(function () {
+  var root = document.getElementById('svHero');
+  if (!root) return;
+  var data = (window.TOPSCAN_DATA && window.TOPSCAN_DATA.services) || [];
+  var rows = [].slice.call(root.querySelectorAll('.svh-item'));
+  var byIndex = [];
+  rows.forEach(function (a) { byIndex[+a.getAttribute('data-i')] = a; });
+  var n = data.length;
+  if (!n || byIndex.length !== n) return;
+
+  var vids = [document.getElementById('svVideoA'), document.getElementById('svVideoB')];
+  var elCat = document.getElementById('svCat'), elDesc = document.getElementById('svDesc'), elTitle = document.getElementById('svTitle');
+  var swaps = [elCat, elDesc, elTitle];
+  var watches = [].slice.call(root.querySelectorAll('.js-watch'));
+  var SLIDE_MS = 6200;
+  var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var finePointer = window.matchMedia && matchMedia('(hover: hover) and (pointer: fine)').matches;
+  var cur = -1, active = 0, elapsed = 0, last = 0, held = false, ready = false, swapT = 0, early = false, covered = false;
+
+  function indexFromHash() {              /* coming back from an offer page: #slug */
+    if (!location.hash) return 0;
+    var slug = decodeURIComponent(location.hash.slice(1)).split('?')[0];
+    for (var i = 0; i < n; i++) {
+      var h = data[i].href;
+      if (h && h.replace(/\/$/, '').split('/').pop() === slug) return i;
+    }
+    return 0;
+  }
+  /* ---- slide change: aperture reveal from the centre + colour-grade (ported from the reference) ---- */
+  var DURATION = 900;
+  var EASING = 'cubic-bezier(0.65, 0, 0.35, 1)';
+  var SCALE_EASING = 'cubic-bezier(0.33, 1, 0.68, 1)';
+  var MATRICES = {
+    violetCitron: '0.115 0.386 0.039 0 0.29  0.136 0.458 0.046 0 0.22  -0.089 -0.300 -0.031 0 0.72  0 0 0 1 0',
+    citronViolet: '-0.115 -0.386 -0.039 0 0.83  -0.136 -0.458 -0.046 0 0.86  0.089 0.300 0.031 0 0.30  0 0 0 1 0',
+    mintMagenta:  '0.182 -0.153 -0.019 0 0.63  0.183 0.615 0.062 0 0.12  -0.114 -0.114 0.068 0 0.80  0 0 0 1 0',
+    identity:     '1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 1 0'
+  };
+  var colorStops = [[0, 'violetCitron'], [0.28, 'citronViolet'], [0.48, 'mintMagenta'], [0.66, 'violetCitron'], [0.78, 'identity']]
+    .map(function (s) { return { offset: s[0], values: MATRICES[s[1]].trim().split(/\s+/).map(Number) }; });
+  function colorAt(progress) {
+    var index = 0;
+    for (var k = colorStops.length - 1; k >= 0; k--) { if (progress >= colorStops[k].offset) { index = k; break; } }
+    var cs = colorStops[index], pv = colorStops[Math.max(0, index - 1)];
+    var blend = Math.min(1, (progress - cs.offset) / (index === colorStops.length - 1 ? 0.2 : 0.12));
+    var eased = blend * blend * (3 - 2 * blend);
+    var contrast = 1 + 0.24 * Math.sin(Math.PI * Math.min(1, progress / 0.94));
+    return cs.values.map(function (value, ch) {
+      var mixed = pv.values[ch] + (value - pv.values[ch]) * eased;
+      if (ch >= 15) return mixed;
+      return mixed * contrast + (ch % 5 === 4 ? (1 - contrast) / 2 : 0);
+    }).join(' ');
+  }
+
+  var stage = document.getElementById('svStage');
+  var NS = 'http://www.w3.org/2000/svg';
+  var layers = vids.map(function (video, idx) {
+    var aperture = video.parentElement.parentElement, scene = video.parentElement;
+    var svg = document.createElementNS(NS, 'svg'), id = 'svh-rgb-' + idx;
+    svg.setAttribute('width', '0'); svg.setAttribute('height', '0'); svg.setAttribute('aria-hidden', 'true');
+    svg.style.position = 'absolute';
+    svg.innerHTML = '<defs><filter id="' + id + '" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB">' +
+      '<feColorMatrix in="SourceGraphic" type="matrix" values="' + MATRICES.identity + '" result="colored"/>' +
+      '<feFlood x="50%" y="50%" width="0%" height="0%" flood-color="white" result="mask"/>' +
+      '<feComposite in="colored" in2="mask" operator="in" result="inside"/>' +
+      '<feComposite in="SourceGraphic" in2="mask" operator="out" result="outside"/>' +
+      '<feMerge><feMergeNode in="outside"/><feMergeNode in="inside"/></feMerge></filter></defs>';
+    document.body.appendChild(svg);
+    return { video: video, aperture: aperture, scene: scene, id: id, matrix: svg.querySelector('feColorMatrix'), mask: svg.querySelector('feFlood') };
+  });
+  var videoIdx = -1, reveal = null, cancelWait = null;
+
+  function play(v) { var p = v.play(); if (p && p.catch) p.catch(function () {}); }
+  function nameShared(idx) {
+    try { vids[idx].style.viewTransitionName = 'shared-hero-video'; vids[1 - idx].style.viewTransitionName = ''; } catch (e) {}
+  }
+  function whenReady(video, cb) {
+    var done = false, events = ['loadeddata', 'canplay', 'seeked'], timer;
+    function cleanup() { done = true; clearTimeout(timer); events.forEach(function (e) { video.removeEventListener(e, check); }); }
+    function check() { if (done || video.readyState < 2 || video.seeking) return; cleanup(); cb(); }
+    events.forEach(function (e) { video.addEventListener(e, check); });
+    timer = setTimeout(function () { if (!done) { cleanup(); cb(); } }, 1200);   /* never hang on a slow clip */
+    check();
+    return cleanup;
+  }
+  function runReveal(fromL, toL) {
+    var finished = false, raf = 0;
+    toL.aperture.style.zIndex = '2'; fromL.aperture.style.zIndex = '1';
+    toL.aperture.style.visibility = 'visible';
+    toL.aperture.style.willChange = 'clip-path, opacity';
+    stage.style.filter = 'url(#' + toL.id + ')';
+    toL.matrix.setAttribute('values', colorAt(0));
+    var timing = { duration: DURATION, fill: 'both' };
+    var motion = toL.aperture.animate([{ clipPath: 'inset(50% 50%)' }, { clipPath: 'inset(0% 0%)' }], { duration: DURATION, fill: 'both', easing: EASING });
+    var scaleMotion = toL.scene.animate([{ transform: 'scale(2)' }, { transform: 'scale(1)' }], { duration: DURATION, fill: 'both', easing: SCALE_EASING });
+    var alphaMotion = toL.aperture.animate([
+      { opacity: 0, offset: 0 },
+      { opacity: 0, offset: 0.2, easing: 'cubic-bezier(0.42, 0, 0.58, 1)' },
+      { opacity: 1, offset: 0.9 },
+      { opacity: 1, offset: 1 }
+    ], timing);
+    var st = document.timeline.currentTime;
+    [motion, scaleMotion, alphaMotion].forEach(function (a) { a.startTime = st; });
+    function finish() {
+      if (finished) return;
+      finished = true; cancelAnimationFrame(raf);
+      motion.cancel(); scaleMotion.cancel(); alphaMotion.cancel();
+      toL.aperture.style.willChange = ''; stage.style.filter = '';
+      toL.matrix.setAttribute('values', MATRICES.identity);
+      fromL.aperture.style.visibility = 'hidden'; fromL.aperture.style.zIndex = '0';
+      toL.aperture.style.zIndex = '1'; toL.scene.style.transform = '';
+      fromL.video.pause();
+      if (reveal === finish) reveal = null;
+    }
+    function sync() {
+      var progress = Math.min(1, (Number(motion.currentTime) || 0) / DURATION);
+      var coverage = motion.effect.getComputedTiming().progress || 0;
+      var inset = (1 - coverage) * 50;
+      toL.mask.setAttribute('x', inset + '%'); toL.mask.setAttribute('y', inset + '%');
+      toL.mask.setAttribute('width', coverage * 100 + '%'); toL.mask.setAttribute('height', coverage * 100 + '%');
+      toL.matrix.setAttribute('values', colorAt(progress));
+      if (!finished) raf = requestAnimationFrame(sync);
+    }
+    sync();
+    motion.finished.then(finish).catch(function () {});
+    return finish;
+  }
+  function setVideo(i, first) {
+    var url = data[i].video;
+    if (!url || i === videoIdx) return;
+    if (first) {
+      layers[0].video.src = url; play(layers[0].video);
+      layers[0].aperture.style.visibility = 'visible'; layers[0].aperture.style.zIndex = '1';
+      nameShared(0); videoIdx = i; return;
+    }
+    if (cancelWait) { cancelWait(); cancelWait = null; }
+    if (reveal) reveal();                                  /* settle the previous reveal first */
+    var fromIdx = active, toIdx = 1 - active, fromL = layers[fromIdx], toL = layers[toIdx];
+    if (fromL.video.getAttribute('src') === url) { videoIdx = i; return; }
+    videoIdx = i; active = toIdx; nameShared(toIdx);
+    if (toL.video.getAttribute('src') !== url) toL.video.src = url;
+    try { toL.video.currentTime = 0; } catch (e) {}
+    play(toL.video);
+    if (reduce || !toL.aperture.animate) {                 /* instant swap */
+      toL.aperture.style.visibility = 'visible'; toL.aperture.style.zIndex = '2';
+      fromL.aperture.style.visibility = 'hidden'; fromL.aperture.style.zIndex = '0'; fromL.video.pause();
+      return;
+    }
+    cancelWait = whenReady(toL.video, function () { cancelWait = null; reveal = runReveal(fromL, toL); });
+  }
+  function setText(s, first) {
+    function apply() { elCat.textContent = s.cat ? '[ ' + s.cat + ' ]' : ''; elDesc.textContent = s.desc || ''; elTitle.textContent = s.title; }
+    clearTimeout(swapT);
+    if (first || reduce) { apply(); return; }
+    swaps.forEach(function (e) { e.classList.add('out'); });
+    swapT = setTimeout(function () {
+      apply();
+      swaps.forEach(function (e) { e.classList.add('pre'); });
+      void root.offsetWidth;
+      swaps.forEach(function (e) { e.classList.remove('out', 'pre'); });
+    }, 240);
+  }
+  function select(i, first) {
+    if (i === cur) return;
+    cur = i; elapsed = 0; early = false;
+    byIndex.forEach(function (a, k) {
+      var on = k === i;
+      a.classList.toggle('selected', on);
+      if (on) a.setAttribute('aria-current', 'true'); else a.removeAttribute('aria-current');
+      a.style.setProperty('--p', 0);
+    });
+    watches.forEach(function (w) { w.href = data[i].href; });
+    setText(data[i], first);
+    setVideo(i, first);
+  }
+
+  function tick(now) {
+    requestAnimationFrame(tick);
+    var dt = now - last; last = now;
+    if (dt > 100) dt = 16;
+    if (held || covered || document.hidden || !ready) return;
+    elapsed += dt;
+    var p = Math.min(1, elapsed / SLIDE_MS);
+    byIndex[cur].style.setProperty('--p', p);
+    if (!early && !reduce && n > 1 && elapsed >= SLIDE_MS - DURATION) { early = true; setVideo((cur + 1) % n); }
+    if (p >= 1) select((cur + 1) % n);
+  }
+
+  /* controls */
+  [].slice.call(root.querySelectorAll('[data-go="back"]')).forEach(function (b) {
+    b.addEventListener('click', function () { select((cur - 1 + n) % n); });
+  });
+  byIndex.forEach(function (a, i) {
+    if (finePointer) a.addEventListener('mouseenter', function () { select(i); });
+    a.addEventListener('focus', function () { select(i); });
+  });
+  var projects = root.querySelector('.svh-projects');
+  projects.addEventListener('mouseenter', function () { held = true; });
+  projects.addEventListener('mouseleave', function () { held = false; });
+  /* horizontal swipe on touch screens */
+  var sx = null, sy = null;
+  root.addEventListener('touchstart', function (e) { sx = e.touches[0].clientX; sy = e.touches[0].clientY; }, { passive: true });
+  root.addEventListener('touchend', function (e) {
+    if (sx === null) return;
+    var dx = sx - e.changedTouches[0].clientX, dy = sy - e.changedTouches[0].clientY;
+    if (Math.abs(dx) > 46 && Math.abs(dx) > Math.abs(dy) * 1.3) select(dx > 0 ? (cur + 1) % n : (cur - 1 + n) % n);
+    sx = null;
+  }, { passive: true });
+
+  /* the about panel covers the hero: stop its video and autoplay until it is visible again */
+  window.__svHeroHold = function (c) {
+    covered = !!c; last = performance.now();
+    var v = vids[active];
+    if (c) { vids.forEach(function (x) { x.pause(); }); } else if (v && v.getAttribute('src')) play(v);
+  };
+
+  select(indexFromHash(), true);
+  function start() {
+    root.classList.add('is-intro');
+    setTimeout(function () { root.classList.add('is-ready'); ready = !reduce; last = performance.now(); }, reduce ? 0 : 1000);
+  }
+  if (window.PT && window.PT.onReveal) window.PT.onReveal(start); else start();
+  requestAnimationFrame(tick);
+})();
+</script>
+<script>
+/* Services page: pinned stage with stacked panels (after productionportugal's home page).
+   hero -> about rises from below -> services list slides in from the right -> footer rises from below.
+   Scroll progress is smoothed; offsets are cached (no layout reads while scrolling). */
+(function () {
+  var track = document.getElementById('svsTrack');
+  if (!track) return;
+  var stage = document.getElementById('svsStage');
+  var about = document.getElementById('svsAbout'), brands = document.getElementById('svsBrands');
+  var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reduce) { about.classList.add('is-in'); brands.classList.add('is-in'); return; }   /* static stacked layout */
+  var root = document.documentElement;
+  root.classList.add('svs-on');
+
+  var K = parseFloat(getComputedStyle(track).getPropertyValue('--svs-k')) || 5.2;
+  var data = (window.TOPSCAN_DATA && window.TOPSCAN_DATA.services) || [];
+  function clamp(v) { return v < 0 ? 0 : v > 1 ? 1 : v; }
+  function ease(t) { return t * t * (3 - 2 * t); }
+
+  /* ---------- footer pieces: heading lines + blocks revealed by scroll ---------- */
+  var ftHead = document.querySelector('.ft-heading');
+  var ftLines = [];
+  if (ftHead) {
+    var parts = [[]];
+    [].slice.call(ftHead.childNodes).forEach(function (n) {
+      if (n.nodeName === 'BR') parts.push([]); else parts[parts.length - 1].push(n);
+    });
+    ftHead.textContent = '';
+    parts.forEach(function (nodes) {
+      if (!nodes.length) return;
+      var ln = document.createElement('span'); ln.className = 'ft-ln';
+      var inn = document.createElement('span'); inn.className = 'ft-ln-in';
+      nodes.forEach(function (n) { inn.appendChild(n); });
+      ln.appendChild(inn); ftHead.appendChild(ln); ftLines.push(inn);
+    });
+  }
+  /* footer reveals, as in the reference: each piece is scrubbed by how far the footer has risen.
+     video zooms out (scale 2 -> 1), heading lines slide up, the card wipes in left->right, the rest slides in from the right */
+  var ft = document.querySelector('footer.ft');
+  var ftReveals = [];
+  function addReveal(target, anchor, kind, index) {
+    if (target && anchor) ftReveals.push({ el: target, anchor: anchor, kind: kind, index: index || 0, start: 50 });
+  }
+  if (ft) {
+    addReveal(ft.querySelector('.footer-media > video'), ft.querySelector('.footer-media'), 'zoom');
+    ftLines.forEach(function (e, i) { addReveal(e, e.parentNode, 'up', i); });
+    addReveal(ft.querySelector('.ft-card'), ft.querySelector('.ft-card'), 'clip');
+    addReveal(ft.querySelector('.ft-card-text'), ft.querySelector('.ft-card-text'), 'right', 1);
+    var metaSel = ['.ft-row', '.ft-addresses > *', '.ft-links > *', '.ft-nav > *'];
+    var mi = 0;
+    metaSel.forEach(function (q) {
+      [].slice.call(ft.querySelectorAll(q)).forEach(function (e) { addReveal(e, e, 'right', mi++ % 3); });
+    });
+  }
+  function measureFooter() {
+    if (!ft) return;
+    var fb = ft.getBoundingClientRect(), vh = document.documentElement.clientHeight;
+    ftReveals.forEach(function (r) {
+      var b = r.anchor.getBoundingClientRect();
+      var localTop = b.top - fb.top, inset = Math.min(b.height * 0.2, 16);
+      var travel = vh - localTop - inset;
+      r.start = Math.max(0.25, Math.min(95, travel / fb.height * 100) * (1 - r.index * 0.045));
+    });
+    for (var i = 1; i < ftReveals.length; i++) {      /* waterfall overlap */
+      var prev = ftReveals[i - 1], c = ftReveals[i];
+      c.start = Math.min(c.start, Math.max(0.25, prev.start - Math.max(2, prev.start * 0.28)));
+    }
+  }
+  function applyReveal(r, q) {
+    var e = r.el.style, o = ease(q);
+    if (r.kind === 'zoom') e.transform = 'translate3d(0,' + (-68 * (1 - o)).toFixed(2) + '%,0) scale(' + (1 + (1 - o)).toFixed(4) + ')';
+    else if (r.kind === 'up') { e.transform = 'translate3d(0,' + (105 * (1 - o)).toFixed(2) + '%,0)'; e.opacity = o.toFixed(3); }
+    else if (r.kind === 'clip') e.clipPath = 'inset(0 ' + ((1 - o) * 100).toFixed(2) + '% 0 0)';
+    else { e.transform = 'translate3d(' + (24 * (1 - o)).toFixed(2) + 'px,0,0)'; e.opacity = o.toFixed(3); }
+  }
+
+  /* ---------- geometry (cached) ---------- */
+  var topDoc = 0, H = window.innerHeight, L = 1, lastW = window.innerWidth;
+  function measure() {
+    var y = 0, el = track;
+    while (el) { y += el.offsetTop; el = el.offsetParent; }
+    topDoc = y; H = stage.offsetHeight || window.innerHeight; L = H * K;
+    measureFooter();
+  }
+  measure();
+
+  /* ---------- scroll-scrubbed panels ---------- */
+  var cur = 0, target = 0, raf = 0, covered = null, bCovered = null;
+  function apply(p) {
+    var ay = (1 - ease(clamp(p / 0.13))) * 100;                  /* about rises over the hero */
+    var bp = ease(clamp((p - 0.44) / 0.16));                     /* about content leaves to the left */
+    var bx = (1 - ease(clamp((p - 0.5) / 0.17))) * 100;          /* list slides in from the right */
+    var x = clamp((p - 0.2) / 0.2), lf = x < 0.5 ? x * 2 : 2 - x * 2;   /* sweep over the links bar */
+    stage.style.setProperty('--ay', ay.toFixed(3));
+    stage.style.setProperty('--bx', bx.toFixed(3));
+    stage.style.setProperty('--bp', bp.toFixed(4));
+    stage.style.setProperty('--lf', lf.toFixed(4));
+    var aIn = p > 0.1, bIn = p > 0.6;
+    if (about.classList.contains('is-in') !== aIn) about.classList.toggle('is-in', aIn);
+    if (brands.classList.contains('is-in') !== bIn) brands.classList.toggle('is-in', bIn);
+    var heroCov = p > 0.13;                                      /* hero fully hidden: pause its video / autoplay */
+    if (heroCov !== covered) { covered = heroCov; if (window.__svHeroHold) window.__svHeroHold(heroCov); }
+    var bOn = p > 0.55;
+    if (bOn !== bCovered) { bCovered = bOn; brandsHold(!bOn); }
+    var cov = scrollNow() > topDoc + L + H * 0.95 ? '1' : '0';
+    if (stage.getAttribute('data-cover') !== cov) stage.setAttribute('data-cover', cov);
+    /* footer: rises over the last screen of the stage; its contents are scrubbed by that rise */
+    var f = clamp((scrollNow() - (topDoc + L)) / H);
+    if (ft) {
+      var offsetPct = (1 - f) * H / (ft.offsetHeight || H) * 100;
+      for (var k = 0; k < ftReveals.length; k++) applyReveal(ftReveals[k], clamp(1 - offsetPct / ftReveals[k].start));
+    }
+  }
+  var sy = window.pageYOffset || 0;
+  function scrollNow() { return sy; }
+  function loop() {
+    raf = 0;
+    cur += (target - cur) * 0.16;                                /* smoothing, like scrub */
+    if (Math.abs(target - cur) < 0.0004) cur = target;
+    apply(cur);
+    if (cur !== target) raf = requestAnimationFrame(loop);
+  }
+  function kick() {
+    sy = window.pageYOffset || document.documentElement.scrollTop || 0;
+    target = clamp((sy - topDoc) / L);
+    if (!raf) raf = requestAnimationFrame(loop);
+  }
+  window.addEventListener('scroll', kick, { passive: true });
+  window.addEventListener('resize', function () {
+    clearTimeout(window.__svsT);
+    window.__svsT = setTimeout(function () { lastW = window.innerWidth; measure(); kick(); }, 150);
+  });
+  window.addEventListener('load', function () { measure(); kick(); });
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { measure(); kick(); });
+
+  /* ---------- services list ("brands"): video crossfade + autoplay progress + hover ---------- */
+  var list = document.getElementById('svbList');
+  var items = list ? [].slice.call(list.querySelectorAll('.svb-item')) : [];
+  var vids = [document.getElementById('svbVidA'), document.getElementById('svbVidB')];
+  var n = items.length, sel = -1, vAct = 0, vIdx = -1, elapsed = 0, last = 0, hovered = false, hold = true, SLIDE_MS = 6200;
+  var finePointer = window.matchMedia && matchMedia('(hover: hover) and (pointer: fine)').matches;
+  var vTimer = 0;
+  function playV(v) { var pr = v.play(); if (pr && pr.catch) pr.catch(function () {}); }
+  function setVid(i) {
+    var url = data[i] && data[i].video;
+    if (!url || i === vIdx) return;
+    vIdx = i;
+    var to = vids[1 - vAct], from = vids[vAct];
+    vAct = 1 - vAct;
+    if (to.getAttribute('src') !== url) to.src = url;
+    try { to.currentTime = 0; } catch (e) {}
+    playV(to);
+    var done = false;
+    function show() { if (done) return; done = true; to.classList.add('on'); from.classList.remove('on'); clearTimeout(vTimer); vTimer = setTimeout(function () { if (vids[vAct] === to) from.pause(); }, 1300); }
+    if (to.readyState >= 2) show(); else { to.addEventListener('loadeddata', show, { once: true }); setTimeout(show, 1500); }
+  }
+  function select(i) {
+    if (i === sel || !n) return;
+    sel = i; elapsed = 0;
+    items.forEach(function (a, k) {
+      var on = k === i;
+      a.classList.toggle('selected', on);
+      if (on) a.setAttribute('aria-current', 'true'); else a.removeAttribute('aria-current');
+      a.style.setProperty('--p', 0);
+    });
+    if (!hold) setVid(i);
+  }
+  function brandsHold(h) {
+    hold = h;
+    if (!h) { last = performance.now(); setVid(Math.max(sel, 0)); var v = vids[vAct]; if (v.getAttribute('src')) playV(v); }
+    else vids.forEach(function (v) { v.pause(); });
+  }
+  function tick(now) {
+    requestAnimationFrame(tick);
+    var dt = now - last; last = now;
+    if (dt > 100) dt = 16;
+    if (hold || hovered || document.hidden || !n) return;
+    elapsed += dt;
+    var p = Math.min(1, elapsed / SLIDE_MS);
+    items[sel].style.setProperty('--p', p);
+    if (p >= 1) select((sel + 1) % n);
+  }
+  if (n) {
+    items.forEach(function (a, i) {
+      if (finePointer) a.addEventListener('mouseenter', function () { select(i); });
+      a.addEventListener('focus', function () { select(i); });
+    });
+    list.addEventListener('mouseenter', function () { hovered = true; });
+    list.addEventListener('mouseleave', function () { hovered = false; });
+    select(0);
+    requestAnimationFrame(tick);
+  }
+  kick();
+})();
+</script>
+<script src="{{ SITE_PREFIX }}/main.js"></script>
+</body>
+</html>
