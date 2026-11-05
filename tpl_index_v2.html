@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+
+<html lang="{{ lang }}">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>{{ t.seoTitle }}</title>
+<meta content="{{ t.metaDescription }}" name="description"/>
+{% if hv2_preview %}
+<meta content="noindex, nofollow" name="robots"/>
+{% else %}
+<meta content="index, follow, max-image-preview:large" name="robots"/>
+{% endif %}
+<link href="{{ BASE_URL }}/{{ lang }}" rel="canonical"/>
+{% if not hv2_preview %}
+{% for h in hreflangs %}
+<link href="{{ h.url }}" hreflang="{{ h.code }}" rel="alternate"/>
+{% endfor %}
+{% endif %}
+<meta content="website" property="og:type"/>
+<meta content="{{ og.site_name }}" property="og:site_name"/>
+<meta content="{{ og.locale }}" property="og:locale"/>
+<meta content="{{ og.url }}" property="og:url"/>
+<meta content="{{ og.title }}" property="og:title"/>
+<meta content="{{ og.description }}" property="og:description"/>
+<meta content="{{ og.image }}" property="og:image"/>
+<meta content="{{ og.alt }}" property="og:image:alt"/>
+<meta content="summary_large_image" name="twitter:card"/>
+<meta content="{{ og.title }}" name="twitter:title"/>
+<meta content="{{ og.description }}" name="twitter:description"/>
+<meta content="{{ og.image }}" name="twitter:image"/>
+{% if ld_json %}
+<script type="application/ld+json">{{ ld_json|safe }}</script>
+{% endif %}
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="{{ SITE_PREFIX }}/styles.css" rel="stylesheet"/>
+<link href="{{ SITE_PREFIX }}/home-v2.css" rel="stylesheet"/>
+<script>
+  /* hv2-on: включает sticky-режим (overflow-x:clip вместо hidden) и сцены v2 */
+  document.documentElement.classList.add('hv2-on');
+  /* v2 сама анимирует заголовки: отключаем побуквенный zipper из main.js */
+  window.__zipHeadingsInit = true; window.__zipHeroInit = true;
+</script>
+</head>
+<body class="hv2-page">
+{% include "_header.html" %}
+
+{# Маска героя: clipPath, формы пересчитываются в home-v2.js при скролле #}
+<svg aria-hidden="true" focusable="false" style="position:absolute;width:0;height:0">
+<clipPath id="hv2Clip" clipPathUnits="userSpaceOnUse">
+<path id="hv2ShapeA"></path>
+<path id="hv2ShapeB"></path>
+<path id="hv2ShapeC" clip-rule="evenodd"></path>
+</clipPath>
+</svg>
+
+<main class="hv2">
+
+<!-- ============ HERO (200svh, pinned) ============ -->
+<section class="hv2-hero" data-hv2-hero data-hv2-theme="dark">
+<div class="hv2-hero__sticky">
+<div class="bg-video-wrap hv2-hero__media">
+{% for v in SITE.heroVideos %}
+<video class="bg-video" muted="" playsinline="" preload="auto" src="{{ v }}"></video>
+{% endfor %}
+<div class="hv2-hero__scrim" data-hv2-scrim></div>
+</div>
+
+<div class="hv2-hero__layer" data-hv2-herotext>
+<div class="hero-coords hv2-hero__coords">
+<div class="rec"><span class="dot"></span> <span>REC · AERIAL DATA</span></div>
+<div id="rtkCoords">X: 41.7151°&#9;Y: 44.8271°&#9;ALT: 490M</div>
+</div>
+<div class="hv2-hero__content">
+<div class="eyebrow">{{ t.hero.eyebrow }}</div>
+<h1 class="hv2-t64t">
+<span class="hv2-hero__l1">{{ t.hero.line1 }}</span>
+<span class="hv2-hero__l2">{{ t.hero.line2 }}</span>
+</h1>
+<p class="hv2-p24 hv2-hero__sub">{{ t.hero.sub }}</p>
+</div>
+<div class="hv2-hero__cue hv2-p16"><span>{{ t.hero.scrollLabel|default('Scroll') }}</span><i aria-hidden="true">↓</i></div>
+</div>
+
+<div class="hv2-interlude" data-hv2-interlude aria-hidden="true">
+<div class="hv2-interlude__frame">
+<span class="hv2-corner tl"></span><span class="hv2-corner tr"></span><span class="hv2-corner bl"></span><span class="hv2-corner br"></span>
+<div class="hv2-interlude__eyebrow hv2-p16">{{ t.hero.eyebrow }}</div>
+<p class="hv2-interlude__text">{{ t.hero.sub }}</p>
+<div class="hv2-interlude__stats">
+{% for s in t.hero.stats %}
+<div><b>{{ s.value }}</b><span>{{ s.label }}</span></div>
+{% endfor %}
+</div>
+</div>
+</div>
+</div>
+</section>
+
+<!-- ============ NARRATIVE (раскладка: заголовок слева, описание справа внизу) ============ -->
+<section class="hv2-sec hv2-light hv2-narr" data-hv2-theme="light" data-hv2-io>
+<span class="hv2-dot" style="top:clamp(24px,4vw,56px);left:var(--hv2-pad)"></span>
+<span class="hv2-dot" style="top:clamp(24px,4vw,56px);left:calc(var(--hv2-pad) + var(--hv2-dot) * 2)"></span>
+<div class="hv2-w hv2-narr__inner">
+<div>
+<div class="eyebrow">{{ t.industries.eyebrow }}</div>
+<h2 class="hv2-t64" data-hv2-split>{{ t.industries.title }}</h2>
+</div>
+<p class="hv2-p32 hv2-narr__desc" data-hv2-split>{{ t.industries.subtitle }}</p>
+</div>
+</section>
+
+<!-- ============ INDUSTRIES: pinned, карточки C. 01 / C. 02 / C. 03 едут по горизонтали ============ -->
+<section class="hv2-cards hv2-light" id="services" data-hv2-theme="light" data-hv2-cards data-hv2-io>
+<div class="hv2-cards__sticky">
+<div class="hv2-cards__track" data-hv2-track>
+<div class="hv2-cards__lead">
+<span class="hv2-p16 hv2-cards__count">( {{ '%02d'|format(industry_services|length) }} )</span>
+<span class="hv2-cards__arrow" aria-hidden="true">→</span>
+</div>
+{% for s in industry_services %}
+<a class="hv2-ci" href="{{ SITE_PREFIX }}/{{ lang }}/services/{{ s.slug }}" style="--i:{{ loop.index0 }}">
+<div class="hv2-ci__prefix hv2-t64">C. {{ '%02d'|format(loop.index) }}</div>
+<article class="hv2-card">
+<span class="hv2-card__dot" aria-hidden="true"></span>
+<span class="hv2-card__vtitle" aria-hidden="true">{{ s.shortTag }}</span>
+<div class="hv2-card__bottom">
+<h3 class="hv2-p24 hv2-card__title">{{ s.title }}</h3>
+<p class="hv2-p16 hv2-card__desc">{{ s.cardDesc }}</p>
+{% if s.video %}
+<div class="hv2-card__media"><video data-hv2-video loop="" muted="" playsinline="" preload="none" data-src="{{ s.video }}"></video></div>
+{% endif %}
+</div>
+</article>
+</a>
+{% endfor %}
+</div>
+<div class="hv2-cards__bar" aria-hidden="true"><i data-hv2-bar></i></div>
+</div>
+</section>
+
+<!-- ============ STATEMENT (строки со смещением, как «We asked…») ============ -->
+<section class="hv2-sec hv2-dark hv2-statement" data-hv2-theme="dark">
+<div class="hv2-w">
+<div class="eyebrow">{{ t.equip.eyebrow }}</div>
+<h2 class="hv2-statement__text">
+{% set words = t.equip.title.split(' ') %}
+{% for line in words|batch(2) %}
+<span class="hv2-line" data-hv2-io style="--o:{{ [0,7,0,7,13,7][loop.index0 % 6] }};--dir:{{ 1 if loop.index0 % 2 else -1 }}">{{ line|join(' ') }}</span>
+{% endfor %}
+</h2>
+</div>
+</section>
+
+<!-- ============ EQUIPMENT ============ -->
+<section class="hv2-sec hv2-dark hv2-equip" id="equipment" data-hv2-theme="dark" data-hv2-io>
+<div class="hv2-w">
+<p class="hv2-p32 hv2-equip__lead" data-hv2-split>{{ t.equip.subtitle }}</p>
+<div class="hv2-equip__grid">
+<div class="equip-visual hv2-equip__visual" data-parallax>
+<div class="slideshow" id="equipSlideshow">
+{% for img in t.equip.images %}
+<img alt="{{ img.alt }}" class="{{ 'slide-active' if loop.first else '' }}" decoding="async"{% if not loop.first %} loading="lazy"{% endif %} src="{{ img.url }}"/>
+{% endfor %}
+</div>
+<div class="scan-line"></div>
+<div class="equip-caption">{{ t.equip.caption }}</div>
+</div>
+<ul class="hv2-equip__list">
+{% for item in t.equip.features %}
+<li style="--i:{{ loop.index0 }}">
+<span class="hv2-idx hv2-p16">( {{ '%02d'|format(loop.index) }} )</span>
+<div><h3 class="hv2-p32">{{ item.title }}</h3><p class="hv2-p16">{{ item.desc }}</p></div>
+</li>
+{% endfor %}
+</ul>
+</div>
+</div>
+</section>
+
+<!-- ============ DELIVERABLES (scatter-список) ============ -->
+<section class="hv2-sec hv2-light hv2-results" id="results" data-hv2-theme="light" data-hv2-io>
+<span class="hv2-dot" style="top:clamp(24px,4vw,56px);right:var(--hv2-pad)"></span>
+<div class="hv2-w">
+<div class="hv2-fit" aria-hidden="true"><span data-hv2-fit>{{ t.results.eyebrow }}</span></div>
+<h2 class="hv2-p32 hv2-results__title" data-hv2-split>{{ t.results.title }}</h2>
+<p class="hv2-p16 hv2-results__sub">{{ t.results.subtitle }}</p>
+<ul class="hv2-scatter">
+{% for f in t.results.fileBadges %}
+<li data-hv2-io style="--dir:{{ 1 if loop.index0 % 2 else -1 }}">
+<span class="hv2-idx hv2-p16">( {{ '%02d'|format(loop.index) }} )</span>
+<div><div class="hv2-p32">{{ f.ext }}</div><p class="hv2-p16">{{ f.desc }}</p></div>
+</li>
+{% endfor %}
+</ul>
+<div class="terrain-preview hv2-terrain" data-parallax>
+<span class="terrain-tag">{{ t.results.terrainTag }}</span>
+<div class="terrain-video-wrap" id="terrainVideoWrap"></div>
+</div>
+</div>
+</section>
+
+</main>
+
+{% set lead_subject = lead.subjectDefault %}
+{% include "_lead_form.html" %}
+{% include "_footer.html" %}
+<script>window.TOPSCAN_DATA = window.TOPSCAN_DATA || {}; window.TOPSCAN_DATA.terrainVideos = {{ terrain_videos|tojson }};</script>
+<script src="{{ SITE_PREFIX }}/main.js"></script>
+<script src="{{ SITE_PREFIX }}/home-v2.js"></script>
+</body>
+</html>
