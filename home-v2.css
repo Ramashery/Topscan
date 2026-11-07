@@ -1,0 +1,58 @@
+/* =====================================================================
+   HOME v2 — hero с видео в маске «t» + панели и футер как на странице services.
+   Подключается после styles.css (сцена .svs-*, .svb-*, .ft-* берётся оттуда),
+   здесь только то, чего на services нет: hero с маской и его текст.
+   ===================================================================== */
+
+/* ---------------- HERO ---------------- */
+.hv2-hero{ background:#000; }
+.hv2-hero__media{ position:absolute; inset:0; z-index:0; }
+
+/* видео видно только внутри буквы «t»; контур и масштаб ведёт home-v2.js */
+html.hv2-mask .hv2-hero__media{ clip-path:url(#hv2Clip); -webkit-clip-path:url(#hv2Clip); }
+html.hv2-mask .hv2-hero__media.is-open{ clip-path:none; -webkit-clip-path:none; }
+
+.hv2-hero__scrim{
+  position:absolute; inset:0; z-index:2; pointer-events:none;
+  background:linear-gradient(180deg, rgba(0,0,0,.22) 0%, rgba(0,0,0,.5) 100%);
+}
+
+/* текст: по левому краю экрана, внизу */
+.hv2-hero__text{
+  position:absolute; inset:0; z-index:3; display:flex; flex-direction:column; justify-content:flex-end; align-items:flex-start;
+  padding:88px 10px 10px; text-align:left; pointer-events:none;
+}
+.hv2-hero__text .hv2-blk.svs-panel{
+  position:relative; inset:auto; width:100%; min-height:0 !important; overflow:visible; will-change:auto;
+  transform:none; background:none; padding:0; isolation:auto;
+}
+.hv2-title{
+  margin:0; color:#fff; text-align:left; text-transform:none; font-weight:700;
+  font-size:clamp(44px, min(9vw, 16vh), 150px); line-height:.9; letter-spacing:-.035em;
+}
+html:lang(ka) .hv2-title{ line-height:1.05; }
+.hv2-title .ln{ padding-bottom:.14em; margin-bottom:-.14em; }
+.hv2-desc{
+  margin:18px 0 0; max-width:min(540px, 92%); color:#fff; text-align:left; text-transform:none; font-weight:700;
+  font-size:clamp(16px, 1.5vw, 22px); line-height:1.08; letter-spacing:-.4px;
+}
+.hv2-desc .ln{ padding-bottom:.12em; margin-bottom:-.12em; }
+
+/* шрифт абзаца задаём на контейнере: JS делит текст на строки, измеряя его при тех же размерах, что и итоговые */
+.svs-para{ font-size:20px; line-height:.95; letter-spacing:-.6px; font-weight:700; }
+@media (min-width:991px) and (max-width:1275px){ .svs-para{ font-size:18px; } }
+@media (max-width:991px){ .svs-para{ font-size:16px; } }
+
+/* пока JS не разбил текст на строки — не показываем «сырой» текст (вспышка) */
+html.svs-on .hv2-desc:not(.is-split),
+html.svs-on .svs-para:not(.is-split){ visibility:hidden; }
+
+/* ---------------- панели ---------------- */
+/* заголовок industries — как about на services, но с выравниванием по правому краю уже заданным в styles.css */
+.svs-about .svs-heading{ color:#d2d5da; }
+
+@media (max-width:991px){
+  .hv2-hero__text{ padding:78px 10px 10px; }
+  .hv2-title{ font-size:clamp(40px, 15vw, 84px); }
+  .hv2-desc{ font-size:16px; max-width:100%; }
+}
