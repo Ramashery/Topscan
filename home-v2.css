@@ -1,0 +1,109 @@
+/* =====================================================================
+   HOME v2 — hero с лого-маской + экраны industries / equipment + футер как на services.
+   Подключается после styles.css (сцена .svs-*, .svb-*, .ft-* берётся оттуда).
+   Здесь только то, чего на services нет: hero и пошаговое появление текста.
+   ===================================================================== */
+
+/* ---------------- HERO ---------------- */
+.hv2-hero{ background:#000; }
+.hv2-hero__media{ position:absolute; inset:0; z-index:0; -webkit-mask-repeat:no-repeat; mask-repeat:no-repeat; }
+/* пока JS не подготовил маску-лого — не показываем видео целиком (без вспышки) */
+html.svs-on:not(.hv2-mask-ready) .hv2-hero__media{ opacity:0; }
+.hv2-hero__scrim{
+  position:absolute; inset:0; z-index:2; pointer-events:none;
+  background:linear-gradient(180deg, rgba(0,0,0,.22) 0%, rgba(0,0,0,.5) 100%);
+}
+
+/* общая основа для двух текстовых блоков hero: прижаты к левому нижнему краю */
+.hv2-hero > .svs-panel{
+  inset:auto; left:10px; bottom:10px; z-index:3; overflow:visible; will-change:auto; transform:none;
+  background:none; text-align:left; pointer-events:none;
+}
+.hv2-hero > .hv2-info{ pointer-events:auto; }
+
+/* заголовок: капс, вес/размер/интерлиньяж как у h2 (.section-head h2) */
+.hv2-titleblk{ width:calc(100% - 20px); }
+.hv2-title{
+  margin:0; color:var(--text, #fff); text-align:left; text-transform:uppercase;
+  font-size:clamp(28px,4vw,44px); font-weight:650; line-height:1.2; letter-spacing:-.02em;
+}
+.hv2-title .ln{ padding-bottom:.14em; margin-bottom:-.14em; }
+
+/* описание и контакты — колонка 45% слева, шрифт абзаца как на services */
+.hv2-info{ width:45%; min-width:min(420px, calc(100% - 20px)); }
+.hv2-desc{
+  margin:0 0 18px; color:#fff; text-align:left; text-transform:none;
+  font-size:20px; line-height:.95; letter-spacing:-.6px; font-weight:700;
+}
+.hv2-desc .ln{ margin-bottom:12px; padding-bottom:.12em; }
+.hv2-info .svs-links{ transform:none; }
+/* контакты появляются как список ссылок на services: поднимаются снизу, затем плашка-заливка стирается */
+.svs-on .hv2-contacts{ transform:translateY(60vh); }
+.svs-on .hv2-info.is-in .hv2-contacts{ transform:none; transition:transform .75s cubic-bezier(.215,.61,.355,1) .7s; }
+.hv2-info .svs-links-fill{ transform:scaleX(1); }
+.svs-on .hv2-info.is-in .svs-links-fill{ animation:hv2Fill 1s cubic-bezier(.85,0,.15,1) 1.3s both; }
+@keyframes hv2Fill{ from{ transform:scaleX(1); } to{ transform:scaleX(0); } }
+
+/* шрифты контейнеров, которые JS делит на строки: измерение идёт при тех же размерах, что и итог */
+.svs-para{ font-size:20px; line-height:.95; letter-spacing:-.6px; font-weight:700; }
+@media (min-width:991px) and (max-width:1275px){ .svs-para{ font-size:18px; } }
+@media (max-width:991px){ .svs-para{ font-size:16px; } }
+/* пока JS не разбил текст на строки — «сырой» текст скрыт */
+html.svs-on .hv2-desc:not(.is-split),
+html.svs-on .svs-para:not(.is-split),
+html.svs-on .hv2-feat__desc:not(.is-split){ visibility:hidden; }
+
+/* ---------------- ШАГИ: блоки текста внутри панелей появляются по очереди ---------------- */
+.hv2-step{
+  position:absolute; inset:0; padding:88px 10px 10px; pointer-events:none;
+  visibility:hidden; opacity:0; transition:opacity .45s ease, visibility 0s linear .45s;
+}
+.hv2-step.is-in{ visibility:visible; opacity:1; pointer-events:auto; transition:none; }
+.hv2-step.is-out{ visibility:visible; opacity:0; transition:opacity .45s ease; }
+/* анимации строк — те же, что у .svs-panel.is-in на services, только завязаны на шаг */
+.hv2-step.is-in [data-split="wipe"] .ln-mask{ animation:svsWipe .8s linear calc(var(--i) * .1s) both; }
+.hv2-step.is-in [data-split="wipe"] .ln-in{ animation:svsShow .8s steps(1,end) calc(var(--i) * .1s) both; }
+.svs-on .hv2-step.is-in [data-split="up"] .ln-in{ transform:none; transition:transform .75s cubic-bezier(.215,.61,.355,1) calc(var(--i) * .09s + .35s); }
+/* уход шага: текст остаётся на месте, шаг плавно гаснет */
+.hv2-step.is-out [data-split="wipe"] .ln-in{ opacity:1; visibility:visible; }
+.svs-on .hv2-step.is-out [data-split="up"] .ln-in{ transform:none; }
+
+/* industries: буллеты под абзацем */
+.hv2-bullets{ list-style:none; margin:14px 0 0; padding:0; }
+.hv2-bullets .ln{ margin:0; }
+.hv2-bullets .ln-in{
+  border-top:1px solid rgba(255,255,255,.22); padding:6px 0 5px;
+  font-size:14px; line-height:1.1; font-weight:700; letter-spacing:-.2px; text-transform:uppercase; color:#fff;
+}
+
+/* equipment: блок преимущества над нижним рядом */
+.hv2-feat{ inset:auto; left:10px; bottom:150px; width:min(560px, 45%); padding:0; z-index:1; }
+.hv2-feat__idx{ font-size:13px; line-height:1.05; text-transform:uppercase; letter-spacing:-.2px; margin-bottom:10px; }
+.hv2-feat__title{
+  margin:0 0 14px; color:#fff; text-transform:uppercase; font-weight:700; letter-spacing:-.03em;
+  font-size:clamp(26px, min(3vw, 6vh), 44px); line-height:.9;
+}
+.hv2-feat__title .ln{ padding-bottom:.1em; margin-bottom:-.1em; }
+.hv2-feat__desc{ margin:0; color:#fff; font-size:20px; line-height:.95; letter-spacing:-.6px; font-weight:700; }
+.hv2-feat__desc .ln{ margin-bottom:10px; }
+@media (min-width:991px) and (max-width:1275px){ .hv2-feat__desc{ font-size:18px; } }
+
+/* список внизу equipment: строки появляются вместе со своим преимуществом */
+.svs-on .hv2-li{ transform:translateX(110vw); }
+.svs-on .hv2-li.on{ transform:none; transition:transform .9s cubic-bezier(.19,1,.22,1) .15s; }
+.hv2-li .svb-item{ cursor:default; }
+
+/* ---------------- без JS / reduced-motion: всё стопкой ---------------- */
+html:not(.svs-on) .hv2-hero > .svs-panel{ position:relative; left:auto; bottom:auto; margin:40px 10px; width:auto; }
+html:not(.svs-on) .hv2-step{ position:relative; inset:auto; visibility:visible; opacity:1; padding:20px 0; }
+html:not(.svs-on) .hv2-feat{ width:auto; }
+html:not(.svs-on) .hv2-li{ transform:none; }
+
+/* ---------------- мобильные ---------------- */
+@media (max-width:991px){
+  .hv2-info{ width:calc(100% - 20px); }
+  .hv2-desc{ font-size:16px; }
+  .hv2-feat{ width:calc(100% - 20px); bottom:180px; }
+  .hv2-feat__desc{ font-size:16px; }
+  .hv2-bullets .ln-in{ font-size:12px; }
+}
